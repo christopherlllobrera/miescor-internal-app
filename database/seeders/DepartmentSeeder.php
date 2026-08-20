@@ -1,0 +1,58 @@
+<?php
+
+namespace Database\Seeders;
+
+use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
+
+class DepartmentSeeder extends Seeder
+{
+    public function run()
+    {
+        DB::unprepared("
+            INSERT INTO `tblDepartment` (`id`, `DeptNo`, `DeptDesc`, `CreatedBy`, `DateCreated`, `UpdatedBy`, `DateUpdated`) VALUES
+            (1, 'MIEA100', 'OFFICE OF THE PRESIDENT', 1, '2025-09-10 09:00:00', NULL, NULL);
+            INSERT INTO `tblDepartment` (`id`, `DeptNo`, `DeptDesc`, `CreatedBy`, `DateCreated`, `UpdatedBy`, `DateUpdated`) VALUES
+            (2, 'MIEB100', 'CORPORATE SERVICES GROUP', 1, '2025-09-10 09:00:01', NULL, NULL);
+            INSERT INTO `tblDepartment` (`id`, `DeptNo`, `DeptDesc`, `CreatedBy`, `DateCreated`, `UpdatedBy`, `DateUpdated`) VALUES
+            (3, 'MIEB110', 'ADMINISTRATIVE SERVICES', 1, '2025-09-10 09:00:02', NULL, NULL);
+            INSERT INTO `tblDepartment` (`id`, `DeptNo`, `DeptDesc`, `CreatedBy`, `DateCreated`, `UpdatedBy`, `DateUpdated`) VALUES
+            (4, 'MIEB120', 'CORPORATE PROCESS MANAGEMENT', 1, '2025-09-10 09:00:03', NULL, NULL),
+            (5, 'MIEC100', 'CORPORATE AUDIT', 1, '2025-09-10 09:00:04', NULL, NULL),
+            (6, 'MIED100', 'SUPPLY CHAIN  MANAGEMENT', 1, '2025-09-10 09:00:05', NULL, NULL),
+            (7, 'MIED110', 'PROCUREMENT TEAM 1', 1, '2025-09-10 09:00:06', NULL, NULL),
+            (8, 'MIED120', 'SUPPLY CHAIN OPERATIONS SUPPORT', 1, '2025-09-10 09:00:07', NULL, NULL),
+            (9, 'MIED140', 'SUPPLY CHAIN BUSINESS PARTNERING GROUP', 1, '2025-09-10 09:00:08', NULL, NULL),
+            (10, 'MIED150', 'WAREHOUSING AND MATERIALS MANAGEMENT', 1, '2025-09-10 09:00:09', NULL, NULL),
+            (11, 'MIEE100', 'FINANCE', 1, '2025-09-10 09:00:10', NULL, NULL),
+            (12, 'MIEE110', 'CONTROLLERSHIP', 1, '2025-09-10 09:00:11', NULL, NULL),
+            (13, 'MIEE120', 'FINANCIAL PLANNING, SYSTEMS AND PROCESS MANAGEMENT', 1, '2025-09-10 09:00:12', 1, '2025-09-04 07:00:04'),
+            (14, 'MIEE130', 'TREASURY', 1, '2025-09-10 09:00:13', 1, '2025-09-04 07:00:05'),
+            (15, 'MIEE140', 'MBI - INTERCOMPANY CHARGES', 1, '2025-09-10 09:00:14', 1, '2025-09-04 07:00:06'),
+            (16, 'MIEE150', 'MLI - INTERCOMPANY CHARGES', 1, '2025-09-10 09:00:15', 1, '2025-09-04 07:00:07'),
+            (17, 'MIEE170', 'PROJECT COST CONROL', 1, '2025-09-10 09:00:16', 1, '2025-09-04 07:00:08'),
+            (18, 'MIEF100', 'LEGAL', 1, '2025-09-10 09:00:17', 1, '2025-09-04 07:00:09'),
+            (19, 'MIEG100', 'ICT', 1, '2025-09-10 09:00:18', 1, '2025-09-04 07:00:10'),
+            (20, 'MIEG110', 'ICT GOVERNANCE AND COMPLIANCE', 1, '2025-09-10 09:00:19', 1, '2025-09-04 07:00:11'),
+            (21, 'MIEG120', 'ICT DELIVERY AND TRANSFORMTION', 1, '2025-09-10 09:00:20', NULL, NULL),
+            (22, 'MIEG130', 'ICT OPERATIONS', 1, '2025-09-10 09:00:21', NULL, NULL),
+            (23, 'MIEH100', 'CORPORATE HR AND TRANSFORMATION', 1, '2025-09-10 09:00:22', NULL, NULL),
+            (24, 'MIEH110', 'COMPENSATION AND BENEFITS DESIGN AND IMPLEMENTATION', 1, '2025-09-10 09:00:23', NULL, NULL),
+            (25, 'MIEH140', 'TALENT DEVELOPMENT AND ENGAGEMENT', 1, '2025-09-10 09:00:24', NULL, NULL),
+            (26, 'MIEH160', 'HR BUSINESS PARTNERING GROUP', 1, '2025-09-10 09:00:25', NULL, NULL),
+            (27, 'MIEH170', 'TALENT ACQUISITION AND RESOURCING', 1, '2025-09-10 09:00:26', NULL, NULL),
+            (28, 'MIEH180', 'ORGANIZATIONAL DEVELOPMENT', 1, '2025-09-10 09:00:27', NULL, NULL),
+            (29, 'MIEI100', 'CORPORATE LABOR RELATIONS', 1, '2025-09-10 09:00:28', NULL, NULL),
+            (30, 'MIEI110', 'LABOR RELATIONS', 1, '2025-09-10 09:00:29', NULL, NULL),
+            (31, 'MIEI120', 'SECURITY SERVICES', 1, '2025-09-10 09:00:30', NULL, NULL),
+            (32, 'MIEK100', 'OCCUPATIONAL SAFETY AND SUSTAINABILITY MANAGEMENT', 1, '2025-09-10 09:00:31', NULL, NULL),
+            (33, 'MIEL100', 'QUALITY ASSURANCE AND CONTROL', 1, '2025-09-10 09:00:32', NULL, NULL),
+            (34, 'MIEL110', 'PROCESS AND STANDARDS', 1, '2025-09-10 09:00:33', NULL, NULL),
+            (35, 'MIEL120', 'QUALITY CONTROL', 1, '2025-09-10 09:00:34', NULL, NULL),
+            (36, 'MIEN100', 'PROJECT ENGINEERING AND EXECUTION', 1, '2025-09-10 09:00:34', NULL, NULL),
+            (37, 'MIEO100', 'LOGISTICS MANAGEMENT', 1, '2025-09-10 09:00:35', NULL, NULL),
+            (38, 'MIEP100', 'COMMERCIAL SERVICES', 1, '2025-09-10 09:00:36', NULL, NULL),
+            (39, 'MIEQ100', 'OPERATIONS GROUP', 1, '2025-09-10 09:00:37', NULL, NULL);
+        ");
+    }
+}
