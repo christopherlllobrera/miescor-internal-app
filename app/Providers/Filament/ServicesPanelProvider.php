@@ -4,6 +4,9 @@ namespace App\Providers\Filament;
 
 use App\Filament\Pages\Auth\Login;
 use App\Filament\Pages\Dashboard;
+use App\Filament\Pages\Dashboard\CBDIDashboard;
+use App\Filament\Pages\Dashboard\HRDashboard;
+use App\Filament\Pages\Dashboard\UserDashboard;
 use Filament\Actions\Action;
 use Filament\Auth\MultiFactor\App\AppAuthentication;
 use Filament\Auth\MultiFactor\Email\EmailAuthentication;
@@ -64,7 +67,12 @@ class ServicesPanelProvider extends PanelProvider
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
             ->pages([
                 Dashboard::class,
-
+                UserDashboard::class,
+                CBDIDashboard::class,
+                HRDashboard::class,
+            ])
+            // ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
+            ->widgets([
             ])
             ->navigationGroups([
                 NavigationGroup::make()
@@ -77,9 +85,7 @@ class ServicesPanelProvider extends PanelProvider
                     ->label('Settings')
                     ->collapsed(),
             ])
-            ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\Filament\Widgets')
-            ->widgets([
-            ])
+
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,

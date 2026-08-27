@@ -10,6 +10,8 @@ class EditAttendanceAuthorizationForm extends EditRecord
 {
     protected static string $resource = AttendanceAuthorizationFormResource::class;
 
+    protected static ?string $title = 'Edit AAF';
+
     protected function getHeaderActions(): array
     {
         return [
