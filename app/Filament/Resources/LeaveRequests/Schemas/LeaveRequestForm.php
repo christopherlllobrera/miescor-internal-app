@@ -28,7 +28,7 @@ class LeaveRequestForm
                     ->columnSpanFull()
                     ->schema([
                         TextInput::make('Name')
-                            ->default(fn () => Auth::user()?->name)
+                            ->afterStateHydrated(fn ($component) => $component->state(Auth::user()?->name))
                             ->disabled(),
                         TextInput::make('empNo')
                             ->label('Employee No')
@@ -109,12 +109,14 @@ class LeaveRequestForm
 
                         Select::make('immediate_supervisor_id')
                             ->relationship('immediate_supervisor', 'EmpNo')
-                            ->preload()
-                            ->searchable(),
+                            ->getOptionLabelFromRecordUsing(fn ($record) => "{$record->EmpLName}, {$record->EmpFName}")
+                            ->searchable(['EmpLName', 'EmpFName'])
+                            ->preload(),
                         Select::make('next_level_supervisor_id')
                             ->relationship('next_level_supervisor', 'EmpNo')
-                            ->preload()
-                            ->searchable(),
+                            ->getOptionLabelFromRecordUsing(fn ($record) => "{$record->EmpLName}, {$record->EmpFName}")
+                            ->searchable(['EmpLName', 'EmpFName'])
+                            ->preload(),
                         
                     ]),
             ]);
