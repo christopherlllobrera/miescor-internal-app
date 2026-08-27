@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources\AttendanceAuthorizationForms\Schemas;
+namespace App\Filament\Resources\OvertimeRequests\Schemas;
 
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Repeater;
@@ -11,7 +11,7 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Illuminate\Support\Facades\Auth;
 
-class AttendanceAuthorizationFormForm
+class OvertimeRequestForm
 {
     public static function configure(Schema $schema): Schema
     {
@@ -59,46 +59,34 @@ class AttendanceAuthorizationFormForm
                             ->searchable(['EmpNo', 'EmpLName', 'EmpFName'])
                             ->preload()
                             ->nullable(),
-                        Select::make('reason')
-                            ->label('Reason')
-                            ->options([
-                                'TCD Malfunction' => 'TCD Malfunction',
-                                'Forgot to Log in or Log out' => 'Forgot to Log in or Log out',
-                                'Out of Base for Official Business' => 'Out of Base for Official Business',
-                                'No Company ID' => 'No Company ID',
-                            ])
-                            ->searchable()
-                            ->preload()
-                            ->required(),
                     ]),
-                Section::make('Attendance Authorization Correction')
+                Section::make('Overtime Request Details')
                     ->columnSpanFull()
                     ->schema([
                         Repeater::make('items')
                             ->columns(5)
-                            ->label('List of AAF')
+                            ->label('List of Overtime Requests')
                             ->relationship('items')
                             ->schema([
                                 DatePicker::make('date')
                                     ->label('Date')
                                     ->required(),
-                                TimePicker::make('time_in')
-                                    ->label('Time In')
+                                TimePicker::make('ot_start')
+                                    ->label('OT Start')
                                     ->required(),
-                                TimePicker::make('request_time_in')
-                                    ->label('Request Time In')
-                                    ->required()
-                                    ->default('08:00:00'),
-                                TimePicker::make('time_out')
-                                    ->label('Time Out')
+                                TimePicker::make('ot_end')
+                                    ->label('OT End')
                                     ->required(),
-                                TimePicker::make('request_time_out')
-                                    ->label('Request Time Out')
-                                    ->default('17:00:00')
+                                TextInput::make('number_of_hours')
+                                    ->label('No. of Hours')
+                                    ->numeric()
+                                    ->required(),
+                                TextInput::make('reason')
+                                    ->label('Reason')
                                     ->required(),
                             ])
                             ->minItems(1)
-                            ->addActionLabel('Add AAF')
+                            ->addActionLabel('Add OT Request')
                             ->columnSpanFull(),
                     ]),
             ]);

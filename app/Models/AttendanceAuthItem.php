@@ -14,6 +14,7 @@ class AttendanceAuthItem extends Model
         'time_out',
         'request_time_in',
         'request_time_out',
+        'remarks',
     ];
 
     protected $casts = [

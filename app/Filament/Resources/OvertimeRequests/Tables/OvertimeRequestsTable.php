@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources\AttendanceAuthorizationForms\Tables;
+namespace App\Filament\Resources\OvertimeRequests\Tables;
 
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
@@ -10,7 +10,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\TextInputColumn;
 use Filament\Tables\Table;
 
-class AttendanceAuthorizationFormsTable
+class OvertimeRequestsTable
 {
     public static function configure(Table $table): Table
     {
@@ -22,13 +22,9 @@ class AttendanceAuthorizationFormsTable
                     ->searchable(['EmpFName', 'EmpLName']),
                 TextColumn::make('employee_group')
                     ->label('Employee Group')
-
                     ->sortable(),
                 TextColumn::make('employee.location.LocDesc')
                     ->label('Sub Area')
-                    ->searchable(),
-                TextColumn::make('employee_group')
-                    ->label('Employee Group')
                     ->searchable(),
                 TextColumn::make('status_display')
                     ->badge()
@@ -54,8 +50,8 @@ class AttendanceAuthorizationFormsTable
             ])
             ->defaultSort('id', 'desc')
             ->deferLoading()
-            ->emptyStateHeading('No Attendance Authorization Forms yet')
-            ->emptyStateDescription('Once you create your first Attendance Authorization Form, it will appear here.')
+            ->emptyStateHeading('No Overtime Requests yet')
+            ->emptyStateDescription('Once you create your first Overtime Request, it will appear here.')
             ->filters([
                 //
             ])
