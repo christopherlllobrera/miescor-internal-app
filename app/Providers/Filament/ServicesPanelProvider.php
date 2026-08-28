@@ -7,6 +7,7 @@ use App\Filament\Pages\Dashboard;
 use App\Filament\Pages\Dashboard\CBDIDashboard;
 use App\Filament\Pages\Dashboard\HRDashboard;
 use App\Filament\Pages\Dashboard\UserDashboard;
+use App\Filament\Pages\MyProfile;
 use Filament\Actions\Action;
 use Filament\Auth\MultiFactor\App\AppAuthentication;
 use Filament\Auth\MultiFactor\Email\EmailAuthentication;
@@ -14,6 +15,7 @@ use Filament\Enums\ThemeMode;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
+use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Navigation\NavigationGroup;
 use Filament\Panel;
 use Filament\PanelProvider;
@@ -25,8 +27,6 @@ use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
-use Joaopaulolndev\FilamentEditProfile\FilamentEditProfilePlugin;
-use Joaopaulolndev\FilamentEditProfile\Pages\EditProfilePage;
 
 class ServicesPanelProvider extends PanelProvider
 {
@@ -85,7 +85,6 @@ class ServicesPanelProvider extends PanelProvider
                     ->label('Settings')
                     ->collapsed(),
             ])
-
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,
@@ -95,33 +94,18 @@ class ServicesPanelProvider extends PanelProvider
                 PreventRequestForgery::class,
                 SubstituteBindings::class,
                 DisableBladeIconComponents::class,
+                DispatchServingFilamentEvent::class,
             ])
             ->authMiddleware([
                 Authenticate::class,
             ])
             ->plugins([
-                FilamentEditProfilePlugin::make()
-                    ->slug('my-profile')
-                    ->setTitle('My Profile')
-                    ->setNavigationLabel('My Profile')
-                    ->setNavigationGroup('Group Profile')
-                    ->setIcon('heroicon-o-user')
-                    ->setSort(10)
-                    // ->canAccess(fn () => auth()->user()->id === 1)
-                    ->shouldRegisterNavigation(false)
-                    ->shouldShowEmailForm()
-                    ->shouldShowAvatarForm()
-                    ->shouldShowMultiFactorAuthentication(),
             ])
             ->userMenuItems([
                 'profile' => Action::make('profile')
                     ->label('Profile')
-                    ->url(fn (): string => EditProfilePage::getUrl())
-                    ->icon('heroicon-m-user-circle'),
-                // If you are using tenancy need to check with the visible method where ->company() is the relation between the user and tenancy model as you called
-                // ->visible(function (): bool {
-                //     return auth()->user()->company()->exists();
-                // }),
+                    ->url(fn (): string => MyProfile::getUrl())
+                    ->icon('heroicon-m-user'),
             ]);
     }
 }

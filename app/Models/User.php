@@ -14,12 +14,13 @@ use Filament\Models\Contracts\HasAvatar;
 use Filament\Panel;
 use Illuminate\Auth\Passwords\CanResetPassword as CanResetPasswordTrait;
 use Illuminate\Contracts\Auth\CanResetPassword;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Storage;
-use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Models\Concerns\LogsActivity;
+use Spatie\Activitylog\Support\LogOptions;
 use Spatie\Permission\Traits\HasPermissions;
 use Spatie\Permission\Traits\HasRoles;
 
@@ -93,7 +94,8 @@ class User extends Authenticatable implements CanResetPassword, FilamentUser, Ha
             ->setDescriptionForEvent(fn (string $event) => "User has been {$event}")
             ->logAll()
             ->logOnlyDirty()
-            ->dontSubmitEmptyLogs();
+            // ->dontSubmitEmptyLogs()
+            ;
     }
 
     public function routeNotificationForMail()
@@ -143,13 +145,19 @@ class User extends Authenticatable implements CanResetPassword, FilamentUser, Ha
 
     public function getFilamentAvatarUrl(): ?string
     {
-        $avatarColumn = config('filament-edit-profile.avatar_column', 'avatar_url');
-
-        return $this->$avatarColumn ? Storage::url($this->$avatarColumn) : null;
+        return $this->avatar_url ? Storage::url($this->avatar_url) : null;
     }
 
     public function getFilamentEmailAuthenticationAddress(): string
     {
         return $this->comp_email;
+    }
+
+    protected function email(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => $this->comp_email,
+            set: fn ($value) => ['comp_email' => $value],
+        );
     }
 }
