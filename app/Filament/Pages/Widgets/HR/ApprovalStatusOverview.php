@@ -15,9 +15,10 @@ use Filament\Widgets\StatsOverviewWidget\Stat;
 class ApprovalStatusOverview extends StatsOverviewWidget
 {
     protected ?string $heading = 'Approval Status';
+
     protected int|array|null $columns = [
         'md' => 2,
-        'xl' => 4
+        'xl' => 4,
     ];
 
     protected function getStats(): array
