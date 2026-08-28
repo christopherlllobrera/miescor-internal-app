@@ -14,7 +14,7 @@ class LeaveRequestsTable
     {
         return $table
             ->columns([
-                TextColumn::make('empNo')
+                TextColumn::make('employee.full_name')
                     ->label('Employee Name'),
                 TextColumn::make('employee_group')
                     ->searchable()
