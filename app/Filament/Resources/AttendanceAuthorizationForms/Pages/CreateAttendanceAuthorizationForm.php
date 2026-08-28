@@ -22,7 +22,7 @@ class CreateAttendanceAuthorizationForm extends CreateRecord
         return Notification::make()
             ->title('New AAF')
             ->success()
-            ->body('A new Attendance Authorization Form has been created')
+            ->body('A new Attendance Authorization has been created')
             ->send();
     }
 
