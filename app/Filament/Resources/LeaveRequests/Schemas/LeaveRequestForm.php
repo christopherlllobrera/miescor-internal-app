@@ -4,6 +4,7 @@ namespace App\Filament\Resources\LeaveRequests\Schemas;
 
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -12,9 +13,7 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
-use Filament\Schemas\Components\Text;
 use Illuminate\Support\Facades\Auth;
-use Filament\Forms\Components\Placeholder;
 use Illuminate\Support\HtmlString;
 
 class LeaveRequestForm
@@ -28,7 +27,7 @@ class LeaveRequestForm
                     ->columnSpanFull()
                     ->schema([
                         TextInput::make('Name')
-                            ->default(fn () => Auth::user()?->name)
+                            ->afterStateHydrated(fn ($component) => $component->state(Auth::user()?->name))
                             ->disabled(),
                         TextInput::make('empNo')
                             ->label('Employee No')
@@ -94,28 +93,30 @@ class LeaveRequestForm
                         FileUpload::make('attachment')
                             ->columnSpan(2),
                         Section::make('Approver')
-                                ->icon('heroicon-o-exclamation-circle')
-                                ->schema([
-                                    Placeholder::make('Guidelines')
-                                        // ->label('')
-                                        ->content(new HtmlString('
+                            ->icon('heroicon-o-exclamation-circle')
+                            ->schema([
+                                Placeholder::make('Guidelines')
+                                    // ->label('')
+                                    ->content(new HtmlString('
                                             <ul class="list-disc list-inside space-y-1 text-sm text-gray-600 dark:text-gray-400">
                                                 <li><strong>Regular:</strong> Physician</li>
                                                 <li><strong>Non-regular:</strong> Physician and IS</li>
                                                 <li><strong>Project Site:</strong> Nurse and IS (RWP)</li>
                                             </ul>
                                         ')),
-                                ]),
+                            ]),
 
                         Select::make('immediate_supervisor_id')
                             ->relationship('immediate_supervisor', 'EmpNo')
-                            ->preload()
-                            ->searchable(),
+                            ->getOptionLabelFromRecordUsing(fn ($record) => "{$record->EmpLName}, {$record->EmpFName}")
+                            ->searchable(['EmpLName', 'EmpFName'])
+                            ->preload(),
                         Select::make('next_level_supervisor_id')
                             ->relationship('next_level_supervisor', 'EmpNo')
-                            ->preload()
-                            ->searchable(),
-                        
+                            ->getOptionLabelFromRecordUsing(fn ($record) => "{$record->EmpLName}, {$record->EmpFName}")
+                            ->searchable(['EmpLName', 'EmpFName'])
+                            ->preload(),
+
                     ]),
             ]);
     }

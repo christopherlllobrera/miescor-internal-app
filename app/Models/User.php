@@ -93,9 +93,7 @@ class User extends Authenticatable implements CanResetPassword, FilamentUser, Ha
             ->useLogName('User')
             ->setDescriptionForEvent(fn (string $event) => "User has been {$event}")
             ->logAll()
-            ->logOnlyDirty()
-            // ->dontSubmitEmptyLogs()
-            ;
+            ->logOnlyDirty();
     }
 
     public function routeNotificationForMail()

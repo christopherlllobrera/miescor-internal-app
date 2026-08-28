@@ -5,8 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Models\Concerns\LogsActivity;
+use Spatie\Activitylog\Support\LogOptions;
 
 class Employee extends Model
 {
@@ -66,8 +66,7 @@ class Employee extends Model
             ->useLogName('Employee')
             ->setDescriptionForEvent(fn (string $event) => "Employee has been {$event}")
             ->logAll()
-            ->logOnlyDirty()
-            ->dontSubmitEmptyLogs();
+            ->logOnlyDirty();
     }
 
     public function getFullNameAttribute(): string
