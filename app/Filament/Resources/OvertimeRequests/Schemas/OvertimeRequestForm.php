@@ -22,7 +22,7 @@ class OvertimeRequestForm
                     ->columnSpanFull()
                     ->schema([
                         TextInput::make('Name')
-                            ->default(fn () => Auth::user()?->name)
+                            ->afterStateHydrated(fn ($component) => $component->state(Auth::user()?->name))
                             ->disabled(),
                         TextInput::make('empNo')
                             ->label('Employee No')
@@ -48,15 +48,15 @@ class OvertimeRequestForm
                         Select::make('immediate_supervisor_id')
                             ->label('Immediate Supervisor (Approver)')
                             ->relationship('immediate_supervisor', 'EmpLName')
-                            ->getOptionLabelFromRecordUsing(fn ($record) => "{$record->EmpNo} - {$record->EmpLName}, {$record->EmpFName}")
-                            ->searchable(['EmpNo', 'EmpLName', 'EmpFName'])
+                            ->getOptionLabelFromRecordUsing(fn ($record) => "{$record->EmpLName}, {$record->EmpFName}")
+                            ->searchable(['EmpLName', 'EmpFName'])
                             ->preload()
                             ->required(),
                         Select::make('next_level_supervisor_id')
                             ->label('Next Level Supervisor')
                             ->relationship('next_level_supervisor', 'EmpLName')
-                            ->getOptionLabelFromRecordUsing(fn ($record) => "{$record->EmpNo} - {$record->EmpLName}, {$record->EmpFName}")
-                            ->searchable(['EmpNo', 'EmpLName', 'EmpFName'])
+                            ->getOptionLabelFromRecordUsing(fn ($record) => "{$record->EmpLName}, {$record->EmpFName}")
+                            ->searchable(['EmpLName', 'EmpFName'])
                             ->preload()
                             ->nullable(),
                     ]),
