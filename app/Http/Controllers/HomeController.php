@@ -16,7 +16,7 @@ class HomeController extends Controller
             ->ordered()
             ->get();
 
-        $featuredPosts = Post::query()
+        $posts = Post::query()
             ->featured()
             ->with(['author', 'categories', 'likes'])
             ->latest('published_at')
@@ -33,6 +33,6 @@ class HomeController extends Controller
             ->limit(6)
             ->get();
 
-        return view('welcome', compact('carousels', 'featuredPosts', 'departments', 'events'));
+        return view('employee-portal.homepage.welcome', compact('carousels', 'posts', 'departments', 'events'));
     }
 }

@@ -4,8 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
-use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Models\Concerns\LogsActivity;
+use Spatie\Activitylog\Support\LogOptions;
 
 class DownloadableModule extends Model
 {
@@ -30,7 +30,7 @@ class DownloadableModule extends Model
             ->setDescriptionForEvent(fn (string $event) => "Downloadable has been {$event}")
             ->logOnly(['cms_department_id', 'form_title', 'form_icon', 'created_at', 'updated_at'])
             ->logOnlyDirty()
-            ->dontSubmitEmptyLogs();
+            ->dontLogEmptyChanges();
     }
 
     // Relationships

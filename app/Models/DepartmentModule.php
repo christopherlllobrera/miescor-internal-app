@@ -3,8 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Models\Concerns\LogsActivity;
+use Spatie\Activitylog\Support\LogOptions;
 
 class DepartmentModule extends Model
 {
@@ -26,7 +26,7 @@ class DepartmentModule extends Model
             ->setDescriptionForEvent(fn (string $event) => "Department page has been {$event}")
             ->logOnly(['cms_department', 'cms_department_name', 'cms_department_slug', 'cms_department_description', 'cms_icon', 'created_at', 'updated_at'])
             ->logOnlyDirty()
-            ->dontSubmitEmptyLogs();
+            ->dontLogEmptyChanges();
     }
 
     public function getRouteKeyName(): string

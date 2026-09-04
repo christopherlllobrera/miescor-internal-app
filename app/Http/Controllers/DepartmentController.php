@@ -32,7 +32,7 @@ class DepartmentController extends Controller
             ])
             ->firstOrFail();
 
-        return view('departmentpage', compact('department'));
+        return view('employee-portal.homepage.departments.departmentpage', compact('department'));
     }
 
     public function download(int $id): Response

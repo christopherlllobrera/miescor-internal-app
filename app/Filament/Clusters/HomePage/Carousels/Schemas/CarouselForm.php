@@ -10,6 +10,7 @@ use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Illuminate\Support\HtmlString;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 class CarouselForm
 {
@@ -88,20 +89,27 @@ class CarouselForm
                             ])
                             ->image()
                             ->live(debounce: 500)
+                            ->acceptedFileTypes(['image/jpeg', 'image/png'])
+                            ->multiple(false)
+                            ->required(fn ($record) => $record === null)
+                            ->columnSpanFull()
                             ->disk('local')
                             ->directory('livewire-tmp')
-                            ->acceptedFileTypes(['image/jpeg', 'image/png'])
-                            ->dehydrated(true)
-                            ->multiple(false)
-                            ->required()
-                            ->columnSpanFull()
+                            ->storeFiles(false)
+                            ->dehydrated(false)
                             ->afterStateHydrated(function ($component, $state) {
-                                // Clear the binary blob so FileUpload doesn't try to load it as a path
-                                if (is_string($state) && ! ctype_print($state)) {
+                                if (is_string($state) && (! ctype_print($state) || strlen($state) > 255)) {
                                     $component->state(null);
-                                } elseif (is_string($state) && strlen($state) > 255) {
-                                    // Likely binary/base64 data, not a filename
-                                    $component->state(null);
+                                }
+                            })
+                            ->saveRelationshipsUsing(function ($record, $state) {
+                                if (is_array($state)) {
+                                    $state = array_values($state)[0] ?? null;
+                                }
+                                if (is_string($state) && \Storage::disk('local')->exists($state)) {
+                                    $record->updateQuietly(['image' => \Storage::disk('local')->get($state)]);
+                                } elseif ($state instanceof TemporaryUploadedFile) {
+                                    $record->updateQuietly(['image' => $state->get()]);
                                 }
                             }),
                     ])

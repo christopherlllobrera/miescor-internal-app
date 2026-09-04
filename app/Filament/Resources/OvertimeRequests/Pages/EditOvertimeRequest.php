@@ -16,4 +16,20 @@ class EditOvertimeRequest extends EditRecord
             DeleteAction::make(),
         ];
     }
+
+    protected function mutateFormDataBeforeSave(array $data): array
+    {
+        $data['updated_by'] = auth()->id();
+
+        if (isset($data['items']) && is_array($data['items'])) {
+            foreach ($data['items'] as $key => $item) {
+                $data['items'][$key]['updated_by'] = auth()->id();
+                if (! isset($item['created_by'])) {
+                    $data['items'][$key]['created_by'] = auth()->id();
+                }
+            }
+        }
+
+        return $data;
+    }
 }

@@ -14,11 +14,23 @@ class OvertimeRequestItem extends Model
         'ot_end',
         'number_of_hours',
         'reason',
+        'created_by',
+        'updated_by',
     ];
 
     protected $casts = [
         'date' => 'date',
     ];
+
+    public function creator(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
+
+    public function updater(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'updated_by');
+    }
 
     public function overtimeRequest(): BelongsTo
     {

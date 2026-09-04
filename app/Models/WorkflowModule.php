@@ -3,8 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Models\Concerns\LogsActivity;
+use Spatie\Activitylog\Support\LogOptions;
 
 class WorkflowModule extends Model
 {
@@ -31,7 +31,7 @@ class WorkflowModule extends Model
             ->setDescriptionForEvent(fn (string $event) => "Workflow has been {$event}")
             ->logAll()
             ->logOnlyDirty()
-            ->dontSubmitEmptyLogs();
+            ->dontLogEmptyChanges();
     }
 
     // Relationships

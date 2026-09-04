@@ -15,6 +15,7 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\HtmlString;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 class DownloadableModuleForm
 {
@@ -114,20 +115,27 @@ class DownloadableModuleForm
                             ->columnSpanFull(),
                         FileUpload::make('form_attachment')
                             ->label('Attachment')
-                            ->required()
+                            ->required(fn ($record) => $record === null)
                             ->acceptedFileTypes(['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'image/jpeg', 'image/png', 'image/jpg', 'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'])
                             ->columnSpanFull()
-                            ->dehydrated(true)
                             ->multiple(false)
                             ->disk('local')
                             ->directory('livewire-tmp')
+                            ->storeFiles(false)
+                            ->dehydrated(false)
                             ->afterStateHydrated(function ($component, $state) {
-                                // Clear the binary blob so FileUpload doesn't try to load it as a path
-                                if (is_string($state) && ! ctype_print($state)) {
+                                if (is_string($state) && (! ctype_print($state) || strlen($state) > 255)) {
                                     $component->state(null);
-                                } elseif (is_string($state) && strlen($state) > 255) {
-                                    // Likely binary/base64 data, not a filename
-                                    $component->state(null);
+                                }
+                            })
+                            ->saveRelationshipsUsing(function ($record, $state) {
+                                if (is_array($state)) {
+                                    $state = array_values($state)[0] ?? null;
+                                }
+                                if (is_string($state) && \Storage::disk('local')->exists($state)) {
+                                    $record->updateQuietly(['form_attachment' => \Storage::disk('local')->get($state)]);
+                                } elseif ($state instanceof TemporaryUploadedFile) {
+                                    $record->updateQuietly(['form_attachment' => $state->get()]);
                                 }
                             }),
                     ]),

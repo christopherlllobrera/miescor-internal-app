@@ -45,7 +45,7 @@ class ServicesPanelProvider extends PanelProvider
             ->darkModeBrandLogo(fn () => view('filament.customization.logodarkmode'))
             ->brandLogo(fn () => view('filament.customization.logo'))
             ->colors([
-                'primary' => Color::Amber,
+                'primary' => Color::Orange,
             ])
             ->multiFactorAuthentication([
                 AppAuthentication::make()

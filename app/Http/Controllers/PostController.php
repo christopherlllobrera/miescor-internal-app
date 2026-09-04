@@ -16,7 +16,7 @@ class PostController extends Controller
             ->take(9)
             ->get();
 
-        return view('employee-portal.newspage.main-newspage', [
+        return view('employee-portal.homepage.newspage.main-newspage', [
             'posts' => $posts,
         ]);
     }
@@ -26,7 +26,7 @@ class PostController extends Controller
         $post->load(['author', 'categories', 'comments.author', 'likes']);
 
         return view(
-            'employee-portal.newspage.posts.show',
+            'employee-portal.homepage.newspage.posts.show',
             [
                 'post' => $post,
             ]
