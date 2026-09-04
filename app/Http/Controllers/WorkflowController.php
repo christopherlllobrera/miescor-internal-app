@@ -38,7 +38,7 @@ class WorkflowController extends Controller
         // Get tags for this department
         $tags = $this->workflowService->getTagsWithCounts($currentDepartment);
 
-        return view('workflowpage', compact('workflows', 'workflowsByTag', 'tags', 'currentDepartment'));
+        return view('employee-portal.homepage.departments.workflow.workflowpage', compact('workflows', 'workflowsByTag', 'tags', 'currentDepartment'));
     }
 
     /**
@@ -60,6 +60,6 @@ class WorkflowController extends Controller
         $workflowModel = WorkflowModule::find($workflow->id);
         $relatedWorkflows = $this->workflowService->getRelatedWorkflows($workflowModel);
 
-        return view('workflow.show', compact('workflow', 'relatedWorkflows', 'currentDepartment'));
+        return view('employee-portal.homepage.departments.workflow.show', compact('workflow', 'relatedWorkflows', 'currentDepartment'));
     }
 }

@@ -3,8 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Models\Concerns\LogsActivity;
+use Spatie\Activitylog\Support\LogOptions;
 
 class DirectoryModule extends Model
 {
@@ -25,7 +25,7 @@ class DirectoryModule extends Model
             ->setDescriptionForEvent(fn (string $event) => "Directory has been {$event}")
             ->logOnly(['poc_name_id', 'poc_job_position', 'created_at', 'updated_at'])
             ->logOnlyDirty()
-            ->dontSubmitEmptyLogs();
+            ->dontLogEmptyChanges();
     }
 
     // Relationships

@@ -13,6 +13,7 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 class DepartmentModuleForm
 {
@@ -103,19 +104,25 @@ class DepartmentModuleForm
                             ->columnspanFull()
                             ->required(),
                         FileUpload::make('cms_banner')
-                            ->required()
                             ->label('Banner Image')
+                            ->required(fn ($record) => $record === null)
                             ->disk('local')
                             ->directory('livewire-tmp')
-                            ->storeFileNamesIn(null)
-                            ->dehydrated(true)
+                            ->storeFiles(false)
+                            ->dehydrated(false)
                             ->afterStateHydrated(function ($component, $state) {
-                                // Clear the binary blob so FileUpload doesn't try to load it as a path
-                                if (is_string($state) && ! ctype_print($state)) {
+                                if (is_string($state) && (! ctype_print($state) || strlen($state) > 255)) {
                                     $component->state(null);
-                                } elseif (is_string($state) && strlen($state) > 255) {
-                                    // Likely binary/base64 data, not a filename
-                                    $component->state(null);
+                                }
+                            })
+                            ->saveRelationshipsUsing(function ($record, $state) {
+                                if (is_array($state)) {
+                                    $state = array_values($state)[0] ?? null;
+                                }
+                                if (is_string($state) && \Storage::disk('local')->exists($state)) {
+                                    $record->updateQuietly(['cms_banner' => \Storage::disk('local')->get($state)]);
+                                } elseif ($state instanceof TemporaryUploadedFile) {
+                                    $record->updateQuietly(['cms_banner' => $state->get()]);
                                 }
                             })
                             ->image()

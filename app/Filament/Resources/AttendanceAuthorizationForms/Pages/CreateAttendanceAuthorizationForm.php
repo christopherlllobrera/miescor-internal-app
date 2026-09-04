@@ -27,4 +27,19 @@ class CreateAttendanceAuthorizationForm extends CreateRecord
     }
 
     protected static ?string $title = 'Create AAF';
+
+    protected function mutateFormDataBeforeCreate(array $data): array
+    {
+        $data['created_by'] = auth()->id();
+        $data['updated_by'] = null;
+
+        if (isset($data['items']) && is_array($data['items'])) {
+            foreach ($data['items'] as $key => $item) {
+                $data['items'][$key]['created_by'] = auth()->id();
+                $data['items'][$key]['updated_by'] = null;
+            }
+        }
+
+        return $data;
+    }
 }

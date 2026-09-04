@@ -15,11 +15,23 @@ class AttendanceAuthItem extends Model
         'request_time_in',
         'request_time_out',
         'remarks',
+        'created_by',
+        'updated_by',
     ];
 
     protected $casts = [
         'date' => 'date',
     ];
+
+    public function creator(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
+
+    public function updater(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'updated_by');
+    }
 
     public function attendanceAuth(): BelongsTo
     {

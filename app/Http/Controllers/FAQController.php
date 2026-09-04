@@ -39,7 +39,7 @@ class FAQController extends Controller
         // Get tags with counts for this department only
         $tags = $this->faqService->getTagsWithCounts($currentDepartment);
 
-        return view('faqpage', compact('faqs', 'faqsByTag', 'tags', 'currentDepartment'));
+        return view('employee-portal.homepage.departments.faq.faqpage', compact('faqs', 'faqsByTag', 'tags', 'currentDepartment'));
     }
 
     /**
@@ -62,6 +62,6 @@ class FAQController extends Controller
         $faqModel = FAQModule::find($faq->id);
         $relatedFaqs = $this->faqService->getRelatedFAQs($faqModel);
 
-        return view('faq.show', compact('faq', 'relatedFaqs', 'currentDepartment'));
+        return view('employee-portal.homepage.departments.faq.show', compact('faq', 'relatedFaqs', 'currentDepartment'));
     }
 }

@@ -25,7 +25,7 @@ class UserDashboard extends Page
             UserOvertimeTable::class,
             LeaveWidgetTable::class,
             UserAttendanceAuthTable::class,
-            
+
         ];
     }
 }

@@ -3,8 +3,8 @@
 namespace App\Filament\Resources\LeaveRequests\Pages;
 
 use App\Filament\Resources\LeaveRequests\LeaveRequestResource;
-use Filament\Resources\Pages\CreateRecord;
 use Filament\Notifications\Notification;
+use Filament\Resources\Pages\CreateRecord;
 
 class CreateLeaveRequest extends CreateRecord
 {
@@ -24,5 +24,13 @@ class CreateLeaveRequest extends CreateRecord
             ->success()
             ->body('A new Leave Request has been created')
             ->send();
+    }
+
+    protected function mutateFormDataBeforeCreate(array $data): array
+    {
+        $data['created_by'] = auth()->id();
+        $data['updated_by'] = null;
+
+        return $data;
     }
 }

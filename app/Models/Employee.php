@@ -66,7 +66,8 @@ class Employee extends Model
             ->useLogName('Employee')
             ->setDescriptionForEvent(fn (string $event) => "Employee has been {$event}")
             ->logAll()
-            ->logOnlyDirty();
+            ->logOnlyDirty()
+            ->dontLogEmptyChanges();
     }
 
     public function getFullNameAttribute(): string
