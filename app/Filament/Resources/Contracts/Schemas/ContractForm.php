@@ -2,8 +2,6 @@
 
 namespace App\Filament\Resources\Contracts\Schemas;
 
-use App\Models\ContractProponent;
-use App\Models\Employee;
 use Carbon\Carbon;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\DatePicker;
@@ -34,14 +32,19 @@ class ContractForm
                             ->maxLength(255),
                         Select::make('assigned_to')
                             ->label('Assign To')
-                            ->options(fn () => Employee::whereHas('position', function ($query) {
-                                $query->where('PostDesc', 'Legal Counsel');
-                            })->get()->pluck('full_name', 'EmpLName')->toArray())
+                            ->relationship(
+                                name: 'assignee',
+                                titleAttribute: 'EmpLName',
+                                modifyQueryUsing: fn ($query) => $query->whereHas('position', function ($q) {
+                                    $q->where('PostDesc', 'Legal Counsel');
+                                })
+                            )
+                            ->getOptionLabelFromRecordUsing(fn ($record) => $record->full_name ?? "{$record->EmpLName}, {$record->EmpFName}")
                             ->preload()
-                            ->searchable(),
+                            ->searchable(['EmpLName', 'EmpFName']),
                         Select::make('proponent')
                             ->label('Contract Proponent')
-                            ->options(fn () => ContractProponent::pluck('proponent_name', 'proponent_code')->toArray())
+                            ->relationship('contractProponent', 'proponent_name')
                             ->required()
                             ->preload()
                             ->searchable()

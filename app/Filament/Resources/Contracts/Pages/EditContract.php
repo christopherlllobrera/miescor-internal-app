@@ -37,6 +37,8 @@ class EditContract extends EditRecord
         $prefix = 'COCO-'.($data['proponent'] ?? '___').'-'.date('y').'-';
         $data['reference_no'] = $prefix.$data['reference_no'];
 
+        $data['updated_by'] = auth()->id();
+
         return $data;
     }
 }

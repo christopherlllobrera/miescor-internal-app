@@ -21,6 +21,9 @@ class CreateContract extends CreateRecord
         $prefix = 'COCO-'.($data['proponent'] ?? '___').'-'.date('y').'-';
         $data['reference_no'] = $prefix.$data['reference_no'];
 
+        $data['created_by'] = auth()->id();
+        $data['updated_by'] = null;
+
         return $data;
     }
 }
