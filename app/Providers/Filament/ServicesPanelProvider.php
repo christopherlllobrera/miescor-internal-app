@@ -27,6 +27,7 @@ use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Relaticle\Flowforge\FlowforgePlugin;
 
 class ServicesPanelProvider extends PanelProvider
 {
@@ -36,6 +37,7 @@ class ServicesPanelProvider extends PanelProvider
             ->default()
             ->id('services')
             ->path('services')
+            ->viteTheme('resources/css/filament/services/theme.css')
             ->login(Login::class)
             ->profile()
             ->spa()
@@ -82,6 +84,8 @@ class ServicesPanelProvider extends PanelProvider
                 NavigationGroup::make()
                     ->label('Data Management'),
                 NavigationGroup::make()
+                    ->label('Contract Management'),
+                NavigationGroup::make()
                     ->label('Settings')
                     ->collapsed(),
             ])
@@ -100,6 +104,7 @@ class ServicesPanelProvider extends PanelProvider
                 Authenticate::class,
             ])
             ->plugins([
+                FlowforgePlugin::make(),
             ])
             ->userMenuItems([
                 'profile' => Action::make('profile')
