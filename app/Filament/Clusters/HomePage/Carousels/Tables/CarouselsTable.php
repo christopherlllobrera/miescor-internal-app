@@ -14,8 +14,15 @@ class CarouselsTable
     {
         return $table
             ->columns([
-                TextColumn::make('title')->label('Title')->sortable()->searchable(),
-                TextColumn::make('subtitle')->label('Subtitle')->sortable()->searchable(),
+                TextColumn::make('title')
+                    ->label('Title')
+                    ->sortable()
+                    ->searchable(),
+                TextColumn::make('subtitle')
+                    ->label('Subtitle')
+                    ->sortable()
+                    ->searchable()
+                    ->wrap(),
                 //
             ])
             ->filters([

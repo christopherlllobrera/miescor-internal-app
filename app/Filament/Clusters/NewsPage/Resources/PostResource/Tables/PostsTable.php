@@ -29,9 +29,9 @@ class PostsTable
                     ->searchable(),
                 TextColumn::make('author.FullName')
                     ->sortable(),
-                ImageColumn::make('image')
-                    ->imageWidth(128)
-                    ->imageHeight(128),
+                // ImageColumn::make('image')
+                //     ->imageWidth(128)
+                //     ->imageHeight(128),
                 TextColumn::make('published_at')
                     ->dateTime()
                     ->sortable(),

@@ -1,5 +1,5 @@
 <section class="bg-gray-50">
-    <div id="blog-feature" class="py-8 px-4 mx-auto max-w-7xl lg:py-16 lg:px-6">
+    <div id="blog-feature" class="py-8 px-4 mx-auto max-w-screen-2xl lg:py-16 md:px-8">
         <div class="mx-auto max-w-screen-sm">
             <x-portal.section-heading
                 title="Feature News"

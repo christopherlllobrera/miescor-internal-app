@@ -2,9 +2,9 @@
 
 namespace App\Filament\Pages\Widgets\HR;
 
-use App\Filament\Resources\AttendanceAuthorizationForms\AttendanceAuthorizationFormResource;
-use App\Filament\Resources\LeaveRequests\LeaveRequestResource;
-use App\Filament\Resources\OvertimeRequests\OvertimeRequestResource;
+use App\Filament\Resources\PayrollSelfService\AttendanceAuthorizationForms\AttendanceAuthorizationFormResource;
+use App\Filament\Resources\PayrollSelfService\LeaveRequests\LeaveRequestResource;
+use App\Filament\Resources\PayrollSelfService\OvertimeRequests\OvertimeRequestResource;
 use App\Models\AttendanceAuth;
 use App\Models\LeaveRequest;
 use App\Models\OvertimeRequest;

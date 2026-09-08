@@ -17,6 +17,7 @@ class PostInfolist
                 TextEntry::make('user_id')
                     ->numeric(),
                 ImageEntry::make('image')
+                    ->state(fn (Post $record) => $record->getThumbnailUrl())
                     ->placeholder('-'),
                 TextEntry::make('title'),
                 TextEntry::make('slug'),

@@ -2,7 +2,7 @@
 
 namespace App\Filament\Pages\Widgets\User;
 
-use App\Filament\Resources\LeaveRequests\LeaveRequestResource;
+use App\Filament\Resources\PayrollSelfService\LeaveRequests\LeaveRequestResource;
 use App\Models\LeaveRequest;
 use Filament\Actions\Action;
 use Filament\Tables\Table;

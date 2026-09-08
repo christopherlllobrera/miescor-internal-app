@@ -2,7 +2,7 @@
 
 namespace App\Filament\Pages\Widgets\User;
 
-use App\Filament\Resources\AttendanceAuthorizationForms\AttendanceAuthorizationFormResource;
+use App\Filament\Resources\PayrollSelfService\AttendanceAuthorizationForms\AttendanceAuthorizationFormResource;
 use App\Models\AttendanceAuthItem;
 use Carbon\Carbon;
 use Filament\Actions\Action;
