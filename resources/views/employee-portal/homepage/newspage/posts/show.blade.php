@@ -1,20 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>{!! $post->title !!}</title>
-    <link rel="icon" type="image/x-icon" href="{{ asset('images/miescor/favicon.ico') }}">
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-</head>
-
-<body>
-
-    @include('employee-portal.homepage.navigation')
+<x-portal.layout title="{!! $post->title !!}">
+    <x-portal.navigation />
     <section class="relative pt-20 pb-20 bg-white ">
         <div
-            class="w-full max-w-lg  mt-3 shadow-xl rounded-xl md:max-w-2xl lg:max-w-4xl px-5 lg:px-11 mx-auto max-md:px-4">
+            class="w-full max-w-screen-2xl mt-3 shadow-xl rounded-xl px-4 md:px-8 mx-auto">
             <nav class="flex" aria-label="Breadcrumb">
                 <ol class="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">
                     <li class="inline-flex items-center">
@@ -42,8 +30,8 @@
 
                 </ol>
             </nav>
-            <div class="img w-full mb-14 mt-6">
-                <img src="{!! $post->getThumbnailUrl() !!}" alt="thumbnail" class="object-cover">
+            <div class="relative w-full mb-10 mt-6 rounded-2xl overflow-hidden bg-gray-100 shadow-sm h-64 sm:h-80 md:h-[400px] lg:h-[500px] xl:h-[600px]">
+                <img src="{!! $post->getThumbnailUrl() !!}" alt="{!! $post->title !!}" class="w-full h-full object-cover">
             </div>
             <h1 class="text-[#111827] font-manrope font-semibold text-4xl min-[500px]:text-5xl leading-tight mb-8">
                 {!! $post->title !!}
@@ -61,6 +49,5 @@
             </div>
         </div>
     </section>
-    @include('employee-portal.homepage.footer')
-</body>
-</html>
+    <x-portal.footer />
+</x-portal.layout>

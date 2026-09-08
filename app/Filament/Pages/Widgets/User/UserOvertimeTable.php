@@ -2,7 +2,7 @@
 
 namespace App\Filament\Pages\Widgets\User;
 
-use App\Filament\Resources\OvertimeRequests\OvertimeRequestResource;
+use App\Filament\Resources\PayrollSelfService\OvertimeRequests\OvertimeRequestResource;
 use App\Models\OvertimeRequestItem;
 use Filament\Actions\Action;
 use Filament\Tables\Columns\TextColumn;
@@ -60,8 +60,8 @@ class UserOvertimeTable extends TableWidget
                 ,
             ])
             ->deferLoading()
-            ->emptyStateHeading('No dispatch yet')
-            ->emptyStateDescription('Once you create your first dispatch, it will appear here.')
+            ->emptyStateHeading('No overtime yet')
+            ->emptyStateDescription('Once you create your first overtime, it will appear here.')
             ->filters([
                 //
             ])

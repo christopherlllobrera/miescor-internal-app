@@ -161,7 +161,7 @@
                         </x-portal.button>
                     </div>
                 @else
-                    <div class="flex items-center justify-center flex-1 h-28 rounded-xl bg-gray-50 ring-1 ring-gray-950/5">
+                    <div class="flex items-center justify-center flex-1 h-48 rounded-xl bg-gray-50 ring-1 ring-gray-950/5 py-6">
                         <p class="text-gray-500 text-sm">No workflows available for this department.</p>
                     </div>
                 @endif
@@ -218,8 +218,8 @@
                         </x-portal.button>
                     </div>
                 @else
-                    <div class="flex items-center justify-center flex-1 h-28 rounded-xl bg-gray-50 ring-1 ring-gray-950/5">
-                        <p class="text-gray-500 text-sm">No FAQs available for this department.</p>
+                    <div class="flex items-center justify-center flex-1  rounded-xl bg-gray-50 ring-1 ring-gray-950/5 py-6">
+                        <p class="text-gray-500 text-sm ">No FAQs available for this department.</p>
                     </div>
                 @endif
             </x-portal.card>

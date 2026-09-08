@@ -15,6 +15,7 @@ use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 class PostForm
 {
@@ -84,14 +85,9 @@ class PostForm
                         FileUpload::make('image')
                             ->label('Image')
                             ->image()
-                            ->columnSpanFull()
-                            ->disk('local')
-                            ->directory('livewire-tmp')
+                            ->columnSpan(fn (string $operation): string|int => $operation === 'create' ? 'full' : 1)
                             ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/jpg'])
-                            // ->required()
-                            ->dehydrated(true)
                             ->multiple(false)
-                            ->storeFileNamesIn(null)
                             ->afterStateHydrated(function ($component, $state) {
                                 if (is_string($state) && ! ctype_print($state)) {
                                     $component->state(null);
@@ -99,51 +95,13 @@ class PostForm
                                     $component->state(null);
                                 }
                             })
-                            ->dehydrateStateUsing(function ($state) {
-                                if (! $state) {
-                                    return null;
-                                }
-
-                                // $state is the temp path e.g. livewire-tmp/01KS4...jpg
-                                $path = storage_path('app/'.$state);
-
-                                if (! file_exists($path)) {
-                                    return null;
-                                }
-
-                                return file_get_contents($path); // store raw binary into longblob
-                            }),
-                        DateTimePicker::make('published_at')
-                            ->default(now())
-                            ->nullable(),
-                        Checkbox::make('featured')
-                            ->columnSpanfull(),
-                        Select::make('user_id')
-                            ->label('Author')
-                            ->options(
-                                fn (): Collection => Employee::where('CompNo', 1101)
-                                    ->whereNotNull('PostNo')
-                                    ->get()
-                                    ->mapWithKeys(fn ($employee) => [
-                                        $employee->EmpNo => $employee->full_name,
-                                    ])
-                            )
-                            ->searchable()
-                            ->required(),
-                        Select::make('categories')
-                            ->multiple()
-                            ->relationship('categories', 'title')
-                            ->searchable(),
-                    ]
-                    ),
-                Section::make('Image')
-                    ->visibleOn(['edit'])
-                    ->collapsible()
-                    ->columnSpan(['lg' => 1])
-                    ->schema([
+                            ->saveUploadedFileUsing(function (TemporaryUploadedFile $file): string {
+                                return (string) $file->get();
+                            })
+                            ->dehydrated(fn ($state) => filled($state)),
                         TextEntry::make('image')
                             ->label('Post Preview')
-                            ->columnSpanFull()
+                            ->columnSpan(1)
                             ->state(function ($record): string {
                                 $title = e($record->title ?? 'Untitled');
                                 $body = e(Str::limit(strip_tags($record->body ?? ''), 100));
@@ -206,8 +164,32 @@ class PostForm
                                             </div>
                                         ";
                             })
-                            ->html(),
-                    ]),
+                            ->html()
+                            ->visibleOn('edit'),
+                        DateTimePicker::make('published_at')
+                            ->default(now())
+                            ->nullable(),
+                        Checkbox::make('featured')
+                            ->columnSpanfull(),
+                        Select::make('user_id')
+                            ->label('Author')
+                            ->options(
+                                fn (): Collection => Employee::where('CompNo', 1101)
+                                    ->whereNotNull('PostNo')
+                                    ->get()
+                                    ->mapWithKeys(fn ($employee) => [
+                                        $employee->EmpNo => $employee->full_name,
+                                    ])
+                            )
+                            ->searchable()
+                            ->required(),
+                        Select::make('categories')
+                            ->multiple()
+                            ->relationship('categories', 'title')
+                            ->searchable(),
+                    ]
+                    ),
+
             ]);
 
     }
