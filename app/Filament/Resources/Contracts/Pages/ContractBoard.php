@@ -6,6 +6,7 @@ use App\Filament\Resources\Contracts\ContractResource;
 use App\Models\Contract;
 use Filament\Actions\Action;
 use Filament\Actions\EditAction;
+use Filament\Forms\Components\Select;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Notifications\Notification;
 use Filament\Schemas\Schema;
@@ -30,6 +31,7 @@ class ContractBoard extends BoardResourcePage
             ->positionIdentifier('position')
             ->columns([
                 Column::make('pending')->label('Pending')->icon('heroicon-o-inbox')->color('violet'),
+                Column::make('proponent-pending')->label('Pending with Proponent')->icon('heroicon-o-eye')->color('violet'),
                 Column::make('in-progress')->label('In Progress')->icon('heroicon-o-arrow-path')->color('info'),
                 Column::make('for-approval')->label('For Approval')->icon('heroicon-o-eye')->color('primary'),
                 Column::make('completed')->label('Completed')->icon('heroicon-o-check-circle')->color('success'),
@@ -37,7 +39,31 @@ class ContractBoard extends BoardResourcePage
             ])
             ->recordActions([
                 EditAction::make()
-                    ->url(fn (Contract $record): string => ContractResource::getUrl('edit', ['record' => $record])),
+                    ->url(fn (Contract $record): string => ContractResource::getUrl('edit', ['record' => $record]))
+                    ->visible(fn (Contract $record): bool => ! in_array($record->status, ['pending', 'proponent-pending'])),
+                Action::make('assign')
+                    ->label('Assign')
+                    ->icon('heroicon-o-user-plus')
+                    ->visible(fn (Contract $record): bool => in_array($record->status, ['pending', 'proponent-pending']))
+                    ->form([
+                        Select::make('assigned_to')
+                            ->label('Assign To')
+                            ->relationship(
+                                name: 'assignee',
+                                titleAttribute: 'EmpLName',
+                                modifyQueryUsing: fn ($query) => $query->whereHas('position', function ($q) {
+                                    $q->where('PostDesc', 'Legal Counsel');
+                                })
+                            )
+                            ->getOptionLabelFromRecordUsing(fn ($record) => $record->full_name ?? "{$record->EmpLName}, {$record->EmpFName}")
+                            ->preload()
+                            ->searchable(['EmpLName', 'EmpFName'])
+                            ->required(),
+                    ])
+                    ->action(function (Contract $record, array $data) {
+                        $record->update(['assigned_to' => $data['assigned_to']]);
+                        $this->dispatch('kanban-board-refresh');
+                    }),
             ])
             ->cardSchema(fn (Schema $schema): Schema => $schema
                 ->components([
@@ -51,7 +77,7 @@ class ContractBoard extends BoardResourcePage
                         ->icon('heroicon-o-user')
                         ->color('gray')
                         ->placeholder('Unassigned')
-                        ->visible(fn (Contract $record): bool => $record->status !== 'pending')
+                        ->visible(fn (Contract $record): bool => $record->status !== 'pending' && $record->status !== 'proponent-pending')
                         ->formatStateUsing(function (?string $state): ?string {
                             if (! $state) {
                                 return null;
@@ -88,13 +114,6 @@ class ContractBoard extends BoardResourcePage
                             ->size('xs')
                             ->extraAttributes(['class' => 'flex items-center'])
                             ->visible(fn (Contract $record): bool => $record->deadline !== null),
-                        TextEntry::make('attachment_count')
-                            ->hiddenLabel()
-                            ->state(fn (Contract $record): int => filled($record->attachment) ? 1 : 0)
-                            ->icon('heroicon-o-paper-clip')
-                            ->color('gray')
-                            ->size('xs')
-                            ->extraAttributes(['class' => 'border-s border-gray-200 ps-2 dark:border-gray-700']),
                         TextEntry::make('remarks_count')
                             ->hiddenLabel()
                             ->state(fn (Contract $record): int => filled($record->remarks) ? 1 : 0)
@@ -153,7 +172,7 @@ class ContractBoard extends BoardResourcePage
     {
         $contract = Contract::find($cardId);
 
-        if ($targetColumnId !== 'pending' && blank($contract?->assigned_to)) {
+        if (! in_array($targetColumnId, ['pending', 'proponent-pending']) && blank($contract?->assigned_to)) {
             Notification::make()
                 ->warning()
                 ->title('The contract is not assigned to anyone yet.')

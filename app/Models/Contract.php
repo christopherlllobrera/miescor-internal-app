@@ -2,15 +2,18 @@
 
 namespace App\Models;
 
+use App\Observers\ContractObserver;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+#[ObservedBy(ContractObserver::class)]
 class Contract extends Model
 {
     protected $fillable = [
         'reference_no',
         'contract_description',
         'assigned_to',
-        'attachment',
         'contract_type',
         'status',
         'turnaround_days',
@@ -20,6 +23,8 @@ class Contract extends Model
         'remarks',
         'proponent',
         'position',
+        'created_by',
+        'updated_by',
     ];
 
     protected function casts(): array
@@ -30,5 +35,25 @@ class Contract extends Model
             'turnaround_date' => 'date',
             'deadline' => 'date',
         ];
+    }
+
+    public function creator(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
+
+    public function updater(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'updated_by');
+    }
+
+    public function assignee(): BelongsTo
+    {
+        return $this->belongsTo(Employee::class, 'assigned_to', 'EmpLName');
+    }
+
+    public function contractProponent(): BelongsTo
+    {
+        return $this->belongsTo(ContractProponent::class, 'proponent', 'proponent_code');
     }
 }
