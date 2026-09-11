@@ -24,19 +24,11 @@ class EditContract extends EditRecord
 
     protected function mutateFormDataBeforeFill(array $data): array
     {
-        if (isset($data['reference_no'])) {
-            $parts = explode('-', $data['reference_no']);
-            $data['reference_no'] = end($parts);
-        }
-
         return $data;
     }
 
     protected function mutateFormDataBeforeSave(array $data): array
     {
-        $prefix = 'COCO-'.($data['proponent'] ?? '___').'-'.date('y').'-';
-        $data['reference_no'] = $prefix.$data['reference_no'];
-
         $data['updated_by'] = auth()->id();
 
         return $data;

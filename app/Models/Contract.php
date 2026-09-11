@@ -2,16 +2,18 @@
 
 namespace App\Models;
 
+use App\Observers\ContractObserver;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+#[ObservedBy(ContractObserver::class)]
 class Contract extends Model
 {
     protected $fillable = [
         'reference_no',
         'contract_description',
         'assigned_to',
-        'attachment',
         'contract_type',
         'status',
         'turnaround_days',
