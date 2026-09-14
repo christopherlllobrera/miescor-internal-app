@@ -5,7 +5,9 @@ namespace App\Observers;
 use App\Models\Contract;
 use App\Notifications\ContractStatusUpdated;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Notification;
+use Filament\Notifications\Notification;
+use Illuminate\Support\Facades\Notification as IlluminateNotification;
+use App\Notifications\ContractDueNotification;
 
 // Timely checks the status change
 class ContractObserver
@@ -16,6 +18,13 @@ class ContractObserver
     public function created(Contract $contract): void
     {
         //
+    }
+
+    public function updating(Contract $contract): void
+    {
+        if (in_array($contract->getOriginal('status'), ['pending', 'proponent-pending']) && $contract->isDirty('assigned_to') && !empty($contract->assigned_to)) {
+                $contract->status = 'in-progress';
+        }
     }
 
     public function updated(Contract $contract): void
@@ -29,7 +38,7 @@ class ContractObserver
                     $contract->creator->notify(new ContractStatusUpdated($contract));
                 } catch (\Exception $e) {
                     Log::error('Failed to notify creator: '.$e->getMessage());
-                    \Filament\Notifications\Notification::make()
+                    Notification::make()
                         ->title('Email Failed')
                         ->body('Could not send status update email to the creator.')
                         ->danger()
@@ -41,15 +50,15 @@ class ContractObserver
         if (($statusChanged || $assigneeChanged) && $contract->assignee && $contract->assignee->EmpEmailAd) {
             try {
                 if ($statusChanged && $contract->status === 'due') {
-                    Notification::route('mail', $contract->assignee->EmpEmailAd)
-                        ->notify(new \App\Notifications\ContractDueNotification($contract));
+                    IlluminateNotification::route('mail', $contract->assignee->EmpEmailAd)
+                        ->notify(new ContractDueNotification($contract));
                 } else {
-                    Notification::route('mail', $contract->assignee->EmpEmailAd)
+                    IlluminateNotification::route('mail', $contract->assignee->EmpEmailAd)
                         ->notify(new ContractStatusUpdated($contract));
                 }
             } catch (\Exception $e) {
                 Log::error('Failed to notify assignee: '.$e->getMessage());
-                \Filament\Notifications\Notification::make()
+                Notification::make()
                     ->title('Email Failed')
                     ->body('Could not send status update email to the assignee.')
                     ->danger()

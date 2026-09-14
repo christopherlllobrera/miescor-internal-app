@@ -80,7 +80,7 @@
                                 <tr>
                                     <td style="text-align: left;">
                                         <p style="font-size: 16px; color: #333333; margin: 0 0 15px 0; padding: 0; line-height: 1.5;">
-                                            Dear <span class="employee-name">{{ $notifiable->name ?? 'User' }}</span>,
+                                            Dear <span class="employee-name">{{ $notifiable->name ?? $contract->assignee?->EmpFName ?? 'User' }}</span>,
                                         </p>
 
                                         <p style="font-size: 16px; color: #333333; margin: 0 0 15px 0; padding: 0; line-height: 1.5;">

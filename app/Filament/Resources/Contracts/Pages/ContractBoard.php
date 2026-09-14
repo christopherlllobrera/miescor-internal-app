@@ -7,6 +7,7 @@ use App\Models\Contract;
 use Filament\Actions\Action;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Notifications\Notification;
 use Filament\Schemas\Schema;
@@ -64,6 +65,65 @@ class ContractBoard extends BoardResourcePage
                         $record->update(['assigned_to' => $data['assigned_to']]);
                         $this->dispatch('kanban-board-refresh');
                     }),
+                Action::make('markForApproval')
+                    ->label('For Approval')
+                    ->icon('heroicon-o-document-check')
+                    ->color('primary')
+                    ->visible(fn (Contract $record): bool => $record->status === 'in-progress')
+                    ->form([
+                        Textarea::make('remarks')->label('Remarks')->required(),
+                    ])
+                    ->modalHeading('Move to For Approval')
+                    ->modalDescription('Are you sure you want to move this contract to For Approval? Make sure all necessary information is attached.')
+                    ->modalSubmitActionLabel('Yes, move it')
+                    ->action(function (Contract $record, array $data) {
+                        $record->contractRemarks()->create(['remark' => $data['remarks'], 'user_id' => auth()->id()]);
+                        $this->forceMoveCard($record->id, 'for-approval');
+                        $this->dispatch('kanban-board-refresh');
+                    }),
+                Action::make('markCompleted')
+                    ->label('Complete')
+                    ->icon('heroicon-o-check-circle')
+                    ->color('success')
+                    ->visible(fn (Contract $record): bool => in_array($record->status, ['for-approval']))
+                    ->form([
+                        Textarea::make('remarks')->label('Remarks')->required(),
+                    ])
+                    ->modalHeading('Move to Completed')
+                    ->modalDescription('Are you sure you want to mark this contract as Completed? This action cannot be undone easily.')
+                    ->modalSubmitActionLabel('Yes, complete it')
+                    ->action(function (Contract $record, array $data) {
+                        $record->contractRemarks()->create(['remark' => $data['remarks'], 'user_id' => auth()->id()]);
+                        $this->forceMoveCard($record->id, 'completed');
+                        $this->dispatch('kanban-board-refresh');
+                    }),
+                Action::make('backToInProgress')
+                    ->label('Back to In Progress')
+                    ->icon('heroicon-o-arrow-path')
+                    ->color('warning')
+                    ->visible(fn (Contract $record): bool => in_array($record->status, ['for-approval']))
+                    ->form([
+                        Textarea::make('remarks')->label('Remarks')->required(),
+                    ])
+                    ->modalHeading('Move to In Progress')
+                    ->modalDescription('Are you sure you want to move this contract to In Progress?')
+                    ->modalSubmitActionLabel('Yes, return it')
+                    ->action(function (Contract $record, array $data) {
+                        $record->contractRemarks()->create(['remark' => $data['remarks'], 'user_id' => auth()->id()]);
+                        $this->forceMoveCard($record->id, 'in-progress');
+                        $this->dispatch('kanban-board-refresh');
+                    }),
+                Action::make('viewRemarks')
+                    ->label('View Remarks')
+                    ->icon('heroicon-o-chat-bubble-left-ellipsis')
+                    ->color('info')
+                    ->visible(fn (Contract $record): bool => $record->contractRemarks()->exists())
+                    ->modalHeading('Remarks History')
+                    ->modalContent(fn (Contract $record) => view('filament.components.remarks-list', [
+                        'remarks' => $record->contractRemarks()->latest()->get()
+                    ]))
+                    ->modalSubmitAction(false)
+                    ->modalCancelActionLabel('Close'),
             ])
             ->cardSchema(fn (Schema $schema): Schema => $schema
                 ->components([
@@ -116,7 +176,7 @@ class ContractBoard extends BoardResourcePage
                             ->visible(fn (Contract $record): bool => $record->deadline !== null),
                         TextEntry::make('remarks_count')
                             ->hiddenLabel()
-                            ->state(fn (Contract $record): int => filled($record->remarks) ? 1 : 0)
+                            ->state(fn (Contract $record): int => $record->contractRemarks()->count())
                             ->icon('heroicon-o-chat-bubble-bottom-center-text')
                             ->color('gray')
                             ->size('xs'),
@@ -139,11 +199,15 @@ class ContractBoard extends BoardResourcePage
 
             Action::make('confirmMove')
                 ->extraAttributes(['style' => 'display: none;'])
-                ->requiresConfirmation()
+                ->form([
+                    Textarea::make('remarks')->label('Remarks')->required(),
+                ])
                 ->modalHeading('Move to For Approval')
                 ->modalDescription('Are you sure you want to move this contract to For Approval? Make sure all necessary information is attached.')
                 ->modalSubmitActionLabel('Yes, move it')
-                ->action(function (array $arguments) {
+                ->action(function (array $arguments, array $data) {
+                    $contract = Contract::find($arguments['cardId']);
+                    $contract?->contractRemarks()->create(['remark' => $data['remarks'], 'user_id' => auth()->id()]);
                     $this->forceMoveCard(
                         $arguments['cardId'],
                         $arguments['targetColumnId'],
@@ -153,11 +217,33 @@ class ContractBoard extends BoardResourcePage
                 }),
             Action::make('confirmMoveToCompleted')
                 ->extraAttributes(['style' => 'display: none;'])
-                ->requiresConfirmation()
+                ->form([
+                    Textarea::make('remarks')->label('Remarks')->required(),
+                ])
                 ->modalHeading('Move to Completed')
                 ->modalDescription('Are you sure you want to mark this contract as Completed? This action cannot be undone easily.')
                 ->modalSubmitActionLabel('Yes, complete it')
-                ->action(function (array $arguments) {
+                ->action(function (array $arguments, array $data) {
+                    $contract = Contract::find($arguments['cardId']);
+                    $contract?->contractRemarks()->create(['remark' => $data['remarks'], 'user_id' => auth()->id()]);
+                    $this->forceMoveCard(
+                        $arguments['cardId'],
+                        $arguments['targetColumnId'],
+                        $arguments['afterCardId'] ?? null,
+                        $arguments['beforeCardId'] ?? null
+                    );
+                }),
+            Action::make('confirmReturnToInProgress')
+                ->extraAttributes(['style' => 'display: none;'])
+                ->form([
+                    Textarea::make('remarks')->label('Remarks')->required(),
+                ])
+                ->modalHeading('Return to In Progress')
+                ->modalDescription('Are you sure you want to return this contract to In Progress?')
+                ->modalSubmitActionLabel('Yes, return it')
+                ->action(function (array $arguments, array $data) {
+                    $contract = Contract::find($arguments['cardId']);
+                    $contract?->contractRemarks()->create(['remark' => $data['remarks'], 'user_id' => auth()->id()]);
                     $this->forceMoveCard(
                         $arguments['cardId'],
                         $arguments['targetColumnId'],
