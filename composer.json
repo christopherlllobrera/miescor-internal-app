@@ -16,7 +16,9 @@
         "pragmarx/google2fa": "^9.1",
         "relaticle/flowforge": "^4.1",
         "spatie/laravel-activitylog": "^5.1",
-        "spatie/laravel-permission": "^8.3"
+        "spatie/laravel-permission": "^8.3",
+        "symfony/http-client": "^8.1",
+        "symfony/microsoft-graph-mailer": "^8.1"
     },
     "require-dev": {
         "fakerphp/faker": "^1.24",
