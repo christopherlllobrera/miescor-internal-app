@@ -16,7 +16,7 @@ return new class extends Migration
                 ->onDelete('cascade');
             $table->string('poc_name_id')->nullable();
             $table->string('poc_job_position')->nullable();
-            $table->longText('poc_image')->nullable();
+            $table->binary('poc_image')->nullable();
             $table->timestamps();
         });
     }

@@ -27,7 +27,7 @@ return new class extends Migration
             $table->string('cookies_validation_count')->nullable();
             $table->string('session_id')->nullable();
             $table->boolean('first_login')->default(1);
-            $table->text('avatar_url')->nullable();
+            $table->binary('avatar_url')->nullable();
             $table->text('app_authentication_secret')->nullable();
             $table->boolean('has_email_authentication')->default(false);
             $table->text('app_authentication_recovery_codes')->nullable();
