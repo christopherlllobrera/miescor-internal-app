@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('title')->nullable();
             $table->longText('subtitle')->nullable();
-            $table->longBlob('image')->nullable();
+            $table->binary('image')->nullable();
             $table->string('button_text')->nullable();
             $table->string('button_link')->nullable();
             $table->boolean('is_active')->default(true);

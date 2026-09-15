@@ -13,12 +13,13 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use UnitEnum;
 
 class ContractProponentResource extends Resource
 {
     protected static ?string $model = ContractProponent::class;
 
-    protected static \UnitEnum|string|null $navigationGroup = 'Contract Management';
+    protected static UnitEnum|string|null $navigationGroup = 'Contract Management';
 
     protected static ?int $navigationSort = 2;
 

@@ -4,6 +4,7 @@ namespace App\Filament\Pages\Dashboard;
 
 use App\Filament\Pages\Widgets\HR\ApprovalStatusOverview;
 use App\Filament\Pages\Widgets\HR\AttendanceAuthorizationFormTable;
+use App\Filament\Pages\Widgets\PSSAnnouncement;
 use BackedEnum;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
@@ -21,6 +22,7 @@ class HRDashboard extends Page
     public function getHeaderWidgets(): array
     {
         return [
+            PSSAnnouncement::class,
             ApprovalStatusOverview::class,
             AttendanceAuthorizationFormTable::class,
         ];

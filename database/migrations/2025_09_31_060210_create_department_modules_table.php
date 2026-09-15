@@ -13,7 +13,7 @@ return new class extends Migration
             $table->string('cms_department_name')->nullable();
             $table->longText('cms_department_description')->nullable();
             $table->string('cms_department_slug')->nullable();
-            $table->longText('cms_banner')->nullable();
+            $table->binary('cms_banner')->nullable();
             $table->timestamps();
         });
     }

@@ -12,7 +12,7 @@ return new class extends Migration
             $table->id();
             $table->string('cms_department_id');
             $table->string('form_title')->nullable();
-            $table->longText('form_attachment')->nullable();
+            $table->binary('form_attachment')->nullable();
             $table->longtext('form_icon')->nullable();
             $table->timestamps();
         });

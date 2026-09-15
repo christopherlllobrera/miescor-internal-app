@@ -2,7 +2,7 @@
 
 namespace App\Filament\Resources\PayrollSelfService\CustomPage;
 
-use App\Filament\Resources\LeaveRequests\Schemas\LeaveRequestForm;
+use App\Filament\Resources\PayrollSelfService\LeaveRequests\Schemas\LeaveRequestForm;
 use App\Models\Employee;
 use App\Models\LeaveRequest;
 use BackedEnum;

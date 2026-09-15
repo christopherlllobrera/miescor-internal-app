@@ -26,7 +26,7 @@ return new class extends Migration
             $table->date('date_end')->nullable();
             $table->string('days_total')->nullable();
             $table->text('reason')->nullable();
-            $table->string('attachment')->nullable();
+            $table->binary('attachment')->nullable();
             $table->string('duration')->nullable();
             $table->string('status')->default('Pending');
             $table->string('immediate_supervisor_id')->nullable();

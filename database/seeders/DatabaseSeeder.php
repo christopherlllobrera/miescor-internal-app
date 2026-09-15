@@ -15,6 +15,11 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        // Schema alterations
+        $this->call([
+            AlterBinaryColumnsToLongBlobSeeder::class,
+        ]);
+
         // Data
         $this->call([
             DepartmentSeeder::class,

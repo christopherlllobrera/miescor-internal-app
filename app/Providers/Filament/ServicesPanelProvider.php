@@ -8,6 +8,9 @@ use App\Filament\Pages\Dashboard\CBDIDashboard;
 use App\Filament\Pages\Dashboard\HRDashboard;
 use App\Filament\Pages\Dashboard\UserDashboard;
 use App\Filament\Pages\MyProfile;
+use App\Filament\Resources\PayrollSelfService\CustomPage\HrBulkAttendanceAuth;
+use App\Filament\Resources\PayrollSelfService\CustomPage\HrBulkLeaveRequest;
+use App\Filament\Resources\PayrollSelfService\CustomPage\HrBulkOvertimeRequest;
 use Filament\Actions\Action;
 use Filament\Auth\MultiFactor\App\AppAuthentication;
 use Filament\Auth\MultiFactor\Email\EmailAuthentication;
@@ -73,6 +76,9 @@ class ServicesPanelProvider extends PanelProvider
                 UserDashboard::class,
                 CBDIDashboard::class,
                 HRDashboard::class,
+                HrBulkAttendanceAuth::class,
+                HrBulkLeaveRequest::class,
+                HrBulkOvertimeRequest::class,
             ])
             // ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
@@ -80,6 +86,8 @@ class ServicesPanelProvider extends PanelProvider
             ->navigationGroups([
                 NavigationGroup::make()
                     ->label('Payroll Self Service'),
+                NavigationGroup::make()
+                    ->label('HR Coordinator Filing'),
                 NavigationGroup::make()
                     ->label('Employee Portal'),
                 NavigationGroup::make()

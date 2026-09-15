@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages\Dashboard;
 
+use App\Filament\Pages\Widgets\PSSAnnouncement;
 use App\Filament\Pages\Widgets\User\LeaveWidgetTable;
 use App\Filament\Pages\Widgets\User\UserAttendanceAuthTable;
 use App\Filament\Pages\Widgets\User\UserOvertimeTable;
@@ -11,7 +12,9 @@ use Filament\Support\Icons\Heroicon;
 
 class UserDashboard extends Page
 {
-    protected static ?string $title = 'User Dashboard';
+    protected static ?string $title = 'Payroll Self Service Overview';
+
+    protected static ?string $navigationLabel = 'PSS Overview';
 
     protected static string $routePath = 'user-dashboard';
 
@@ -22,6 +25,7 @@ class UserDashboard extends Page
     public function getHeaderWidgets(): array
     {
         return [
+            PSSAnnouncement::class,
             UserOvertimeTable::class,
             LeaveWidgetTable::class,
             UserAttendanceAuthTable::class,
