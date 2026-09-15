@@ -25,19 +25,36 @@ class ContractBoard extends BoardResourcePage
 
     public function board(Board $board): Board
     {
+        $columns = [];
+        $user = auth()->user();
+
+        if ($user->can('view-kanban-board-all')) {
+            $columns[] = Column::make('pending')->label('Pending')->icon('heroicon-o-inbox')->color('violet');
+            $columns[] = Column::make('proponent-pending')->label('Pending with Proponent')->icon('heroicon-o-eye')->color('violet');
+        }
+
+        if ($user->can('view-kanban-board-all') || $user->can('view-kanban-board-in-progress')) {
+            $columns[] = Column::make('in-progress')->label('In Progress')->icon('heroicon-o-arrow-path')->color('info');
+        }
+
+        if ($user->can('view-kanban-board-all') || $user->can('view-kanban-board-for-approval')) {
+            $columns[] = Column::make('for-approval')->label('For Approval')->icon('heroicon-o-eye')->color('primary');
+        }
+
+        if ($user->can('view-kanban-board-all')) {
+            $columns[] = Column::make('completed')->label('Completed')->icon('heroicon-o-check-circle')->color('success');
+        }
+
+        if ($user->can('view-kanban-board-all') || $user->can('view-kanban-board-due')) {
+            $columns[] = Column::make('due')->label('Due')->icon('heroicon-o-exclamation-circle')->color('danger');
+        }
+
         return $board
             ->query($this->getEloquentQuery())
             ->recordTitleAttribute('reference_no')
             ->columnIdentifier('status')
             ->positionIdentifier('position')
-            ->columns([
-                Column::make('pending')->label('Pending')->icon('heroicon-o-inbox')->color('violet'),
-                Column::make('proponent-pending')->label('Pending with Proponent')->icon('heroicon-o-eye')->color('violet'),
-                Column::make('in-progress')->label('In Progress')->icon('heroicon-o-arrow-path')->color('info'),
-                Column::make('for-approval')->label('For Approval')->icon('heroicon-o-eye')->color('primary'),
-                Column::make('completed')->label('Completed')->icon('heroicon-o-check-circle')->color('success'),
-                Column::make('due')->label('Due')->icon('heroicon-o-exclamation-circle')->color('danger'),
-            ])
+            ->columns($columns)
             ->recordActions([
                 EditAction::make()
                     ->url(fn (Contract $record): string => ContractResource::getUrl('edit', ['record' => $record]))
@@ -120,7 +137,7 @@ class ContractBoard extends BoardResourcePage
                     ->visible(fn (Contract $record): bool => $record->contractRemarks()->exists())
                     ->modalHeading('Remarks History')
                     ->modalContent(fn (Contract $record) => view('filament.components.remarks-list', [
-                        'remarks' => $record->contractRemarks()->latest()->get()
+                        'remarks' => $record->contractRemarks()->latest()->get(),
                     ]))
                     ->modalSubmitAction(false)
                     ->modalCancelActionLabel('Close'),
@@ -195,7 +212,8 @@ class ContractBoard extends BoardResourcePage
         return [
             Action::make('create')
                 ->label('New Contract')
-                ->url(fn (): string => ContractResource::getUrl('create')),
+                ->url(fn (): string => ContractResource::getUrl('create'))
+                ->visible(fn () => auth()->user()->can('create-contract')),
 
             Action::make('confirmMove')
                 ->extraAttributes(['style' => 'display: none;'])
