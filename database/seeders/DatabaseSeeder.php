@@ -40,6 +40,7 @@ class DatabaseSeeder extends Seeder
             ICTFaqModulesSeeder::class,
             EmployeePortalRoleSeeder::class,
             SettingPermissionSeeder::class,
+            LegalKanbanRoleSeeder::class,
         ]);
 
         app()[PermissionRegistrar::class]->forgetCachedPermissions();

@@ -25,19 +25,40 @@ class ContractBoard extends BoardResourcePage
 
     public function board(Board $board): Board
     {
+        $columns = [];
+        $user = auth()->user();
+
+        if ($user->can('view-kanban-board-all')) {
+            $columns[] = Column::make('pending')->label('Pending')->icon('heroicon-o-inbox')->color('violet');
+            $columns[] = Column::make('proponent-pending')->label('Pending with Proponent')->icon('heroicon-o-eye')->color('violet');
+        }
+
+        if ($user->can('view-kanban-board-all') || $user->can('view-kanban-board-in-progress')) {
+            $columns[] = Column::make('in-progress')->label('In Progress')->icon('heroicon-o-arrow-path')->color('info');
+        }
+
+        if ($user->can('view-kanban-board-all') || $user->can('view-kanban-board-for-approval')) {
+            $columns[] = Column::make('for-approval')->label('For Approval')->icon('heroicon-o-eye')->color('primary');
+        }
+
+        if ($user->can('view-kanban-board-all')) {
+            $columns[] = Column::make('for-execution')->label('For Execution')->icon('heroicon-o-printer')->color('info');
+        }
+        // Change to executed
+        if ($user->can('view-kanban-board-all')) {
+            $columns[] = Column::make('executed')->label('Executed')->icon('heroicon-o-check-circle')->color('success');
+        }
+
+        if ($user->can('view-kanban-board-all') || $user->can('view-kanban-board-due')) {
+            $columns[] = Column::make('due')->label('Due')->icon('heroicon-o-exclamation-circle')->color('danger');
+        }
+
         return $board
             ->query($this->getEloquentQuery())
             ->recordTitleAttribute('reference_no')
             ->columnIdentifier('status')
             ->positionIdentifier('position')
-            ->columns([
-                Column::make('pending')->label('Pending')->icon('heroicon-o-inbox')->color('violet'),
-                Column::make('proponent-pending')->label('Pending with Proponent')->icon('heroicon-o-eye')->color('violet'),
-                Column::make('in-progress')->label('In Progress')->icon('heroicon-o-arrow-path')->color('info'),
-                Column::make('for-approval')->label('For Approval')->icon('heroicon-o-eye')->color('primary'),
-                Column::make('completed')->label('Completed')->icon('heroicon-o-check-circle')->color('success'),
-                Column::make('due')->label('Due')->icon('heroicon-o-exclamation-circle')->color('danger'),
-            ])
+            ->columns($columns)
             ->recordActions([
                 EditAction::make()
                     ->url(fn (Contract $record): string => ContractResource::getUrl('edit', ['record' => $record]))
@@ -81,20 +102,20 @@ class ContractBoard extends BoardResourcePage
                         $this->forceMoveCard($record->id, 'for-approval');
                         $this->dispatch('kanban-board-refresh');
                     }),
-                Action::make('markCompleted')
-                    ->label('Complete')
+                Action::make('markExecuted')
+                    ->label('Execute')
                     ->icon('heroicon-o-check-circle')
                     ->color('success')
                     ->visible(fn (Contract $record): bool => in_array($record->status, ['for-approval']))
                     ->form([
                         Textarea::make('remarks')->label('Remarks')->required(),
                     ])
-                    ->modalHeading('Move to Completed')
-                    ->modalDescription('Are you sure you want to mark this contract as Completed? This action cannot be undone easily.')
-                    ->modalSubmitActionLabel('Yes, complete it')
+                    ->modalHeading('Move to Executed')
+                    ->modalDescription('Are you sure you want to mark this contract as Executed? This action cannot be undone easily.')
+                    ->modalSubmitActionLabel('Yes, execute it')
                     ->action(function (Contract $record, array $data) {
                         $record->contractRemarks()->create(['remark' => $data['remarks'], 'user_id' => auth()->id()]);
-                        $this->forceMoveCard($record->id, 'completed');
+                        $this->forceMoveCard($record->id, 'executed');
                         $this->dispatch('kanban-board-refresh');
                     }),
                 Action::make('backToInProgress')
@@ -120,7 +141,7 @@ class ContractBoard extends BoardResourcePage
                     ->visible(fn (Contract $record): bool => $record->contractRemarks()->exists())
                     ->modalHeading('Remarks History')
                     ->modalContent(fn (Contract $record) => view('filament.components.remarks-list', [
-                        'remarks' => $record->contractRemarks()->latest()->get()
+                        'remarks' => $record->contractRemarks()->latest()->get(),
                     ]))
                     ->modalSubmitAction(false)
                     ->modalCancelActionLabel('Close'),
@@ -195,7 +216,8 @@ class ContractBoard extends BoardResourcePage
         return [
             Action::make('create')
                 ->label('New Contract')
-                ->url(fn (): string => ContractResource::getUrl('create')),
+                ->url(fn (): string => ContractResource::getUrl('create'))
+                ->visible(fn () => auth()->user()->can('create-contract')),
 
             Action::make('confirmMove')
                 ->extraAttributes(['style' => 'display: none;'])
@@ -215,14 +237,14 @@ class ContractBoard extends BoardResourcePage
                         $arguments['beforeCardId'] ?? null
                     );
                 }),
-            Action::make('confirmMoveToCompleted')
+            Action::make('confirmMoveToExecuted')
                 ->extraAttributes(['style' => 'display: none;'])
                 ->form([
                     Textarea::make('remarks')->label('Remarks')->required(),
                 ])
-                ->modalHeading('Move to Completed')
-                ->modalDescription('Are you sure you want to mark this contract as Completed? This action cannot be undone easily.')
-                ->modalSubmitActionLabel('Yes, complete it')
+                ->modalHeading('Move to Executed')
+                ->modalDescription('Are you sure you want to mark this contract as Executed? This action cannot be undone easily.')
+                ->modalSubmitActionLabel('Yes, execute it')
                 ->action(function (array $arguments, array $data) {
                     $contract = Contract::find($arguments['cardId']);
                     $contract?->contractRemarks()->create(['remark' => $data['remarks'], 'user_id' => auth()->id()]);
@@ -280,8 +302,8 @@ class ContractBoard extends BoardResourcePage
             return;
         }
 
-        if ($contract->status === 'for-approval' && $targetColumnId === 'completed') {
-            $this->mountAction('confirmMoveToCompleted', [
+        if ($contract->status === 'for-approval' && $targetColumnId === 'executed') {
+            $this->mountAction('confirmMoveToExecuted', [
                 'cardId' => $cardId,
                 'targetColumnId' => $targetColumnId,
                 'afterCardId' => $afterCardId,

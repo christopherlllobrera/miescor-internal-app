@@ -35,7 +35,7 @@ class RecentContractsWidget extends TableWidget
                         'violet' => 'pending',
                         'info' => 'in-progress',
                         'warning' => 'for-approval',
-                        'success' => 'completed',
+                        'success' => 'executed',
                         'danger' => 'due',
                     ]),
                 TextColumn::make('updated_at')

@@ -19,7 +19,7 @@ class ContractResource extends Resource
 {
     protected static ?string $model = Contract::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::Briefcase;
 
     protected static string|UnitEnum|null $navigationGroup = 'Contract Management';
 
@@ -49,5 +49,10 @@ class ContractResource extends Resource
             'create' => CreateContract::route('/create'),
             'edit' => EditContract::route('/{record}/edit'),
         ];
+    }
+
+    public static function canCreate(): bool
+    {
+        return auth()->user()->can('create-contract');
     }
 }
