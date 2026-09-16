@@ -9,5 +9,10 @@ class ContractProponent extends Model
     protected $fillable = [
         'proponent_name',
         'proponent_code',
+        'business_unit',
+    ];
+
+    protected $casts = [
+        'business_unit' => 'array',
     ];
 }

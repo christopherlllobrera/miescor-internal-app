@@ -84,7 +84,7 @@
                                         </p>
 
                                         <p style="font-size: 16px; color: #333333; margin: 0 0 15px 0; padding: 0; line-height: 1.5;">
-                                            The status for the contract Ref: {{ $contract->reference_no }} has been changed.
+                                            The status for the contract "<strong>{{ $contract->contract_title }}</strong>" (Ref: {{ $contract->reference_no }}) has been changed.
                                         </p>
 
                                         <p style="font-size: 16px; color: #333333; margin: 0 0 15px 0; padding: 0; line-height: 1.5;">

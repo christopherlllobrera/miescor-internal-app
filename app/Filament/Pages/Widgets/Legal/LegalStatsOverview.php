@@ -18,7 +18,7 @@ class LegalStatsOverview extends StatsOverviewWidget
             Stat::make('Pending', Contract::where('status', 'pending')->count())
                 ->description('Waiting for assignment')
                 ->descriptionIcon('heroicon-m-clock')
-                ->color('violet'),
+                ->color('gray'),
             Stat::make('In Progress', Contract::where('status', 'in-progress')->count())
                 ->description('Currently being reviewed')
                 ->descriptionIcon('heroicon-m-arrow-path')

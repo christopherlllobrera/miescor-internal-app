@@ -69,6 +69,14 @@ class ContractForm
                             ->validationMessages([
                                 'required' => 'Please select the type of contract.',
                             ]),
+                        Textarea::make('contract_title')
+                            ->label('Contract Title')
+                            ->maxLength(255)
+                            ->required()
+                            ->validationMessages([
+                                'required' => 'Please provide a title for this contract.',
+                            ])
+                            ->columnSpanFull(),
                         Textarea::make('contract_description')
                             ->label('Contract Description')
                             ->required()
@@ -76,10 +84,6 @@ class ContractForm
                                 'required' => 'Please provide a description for this contract.',
                             ])
                             ->columnSpanFull(),
-                        Textarea::make('remarks')
-                            ->label('Remarks')
-                            ->columnSpanFull()
-                            ->visibleOn('edit'),
                         Checkbox::make('has_turnaround_time')
                             ->label('Has turnaround time')
                             ->default(false)
