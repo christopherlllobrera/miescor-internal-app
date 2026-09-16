@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\ContractProponents\Schemas;
 
+use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
@@ -22,6 +23,10 @@ class ContractProponentForm
                         TextInput::make('proponent_code')
                             ->label('Proponent Code')
                             ->required(),
+                        TagsInput::make('business_unit')
+                            ->label('Business Units')
+                            ->placeholder('Type a business unit and press enter')
+                            ->nullable(),
                     ]),
             ]);
     }

@@ -5,10 +5,12 @@ namespace App\Filament\Resources\Contracts;
 use App\Filament\Resources\Contracts\Pages\ContractBoard;
 use App\Filament\Resources\Contracts\Pages\CreateContract;
 use App\Filament\Resources\Contracts\Pages\EditContract;
+use App\Filament\Resources\Contracts\Pages\ListContracts;
 use App\Filament\Resources\Contracts\Schemas\ContractForm;
 use App\Filament\Resources\Contracts\Tables\ContractsTable;
 use App\Models\Contract;
 use BackedEnum;
+use Filament\Actions\Action;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -46,6 +48,7 @@ class ContractResource extends Resource
     {
         return [
             'index' => ContractBoard::route('/'),
+            'list' => ListContracts::route('/list'),
             'create' => CreateContract::route('/create'),
             'edit' => EditContract::route('/{record}/edit'),
         ];
@@ -54,5 +57,14 @@ class ContractResource extends Resource
     public static function canCreate(): bool
     {
         return auth()->user()->can('create-contract');
+    }
+
+    public static function backToKanban(): Action
+    {
+        return Action::make('back-to-kanban')
+            ->label('Back to Kanban')
+            ->url(fn (): string => ContractResource::getUrl('index'))
+            ->color('gray')
+            ->visible(fn () => auth()->user()->can('create-contract'));
     }
 }

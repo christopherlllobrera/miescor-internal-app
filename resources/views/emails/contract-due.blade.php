@@ -84,7 +84,7 @@
                                         </p>
 
                                         <p style="font-size: 16px; color: #333333; margin: 0 0 15px 0; padding: 0; line-height: 1.5;">
-                                            This is a reminder that the contract "<strong>{{ $contract->reference_no }}</strong>" assigned to you is now due.
+                                            This is a reminder that the contract "<strong>{{ $contract->contract_title }}</strong>" (Ref: {{ $contract->reference_no }}) assigned to you is now due.
                                         </p>
 
                                         <p style="font-size: 16px; color: #333333; margin: 0 0 15px 0; padding: 0; line-height: 1.5;">

@@ -16,6 +16,7 @@ class Contract extends Model
 
     protected $fillable = [
         'reference_no',
+        'contract_title',
         'contract_description',
         'assigned_to',
         'contract_type',
@@ -29,6 +30,7 @@ class Contract extends Model
         'position',
         'created_by',
         'updated_by',
+        'attachment',
     ];
 
     protected function casts(): array

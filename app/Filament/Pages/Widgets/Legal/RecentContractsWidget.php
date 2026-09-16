@@ -3,7 +3,10 @@
 namespace App\Filament\Pages\Widgets\Legal;
 
 use App\Models\Contract;
+use Filament\Forms\Components\DatePicker;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\Filter;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget;
 use Illuminate\Database\Eloquent\Builder;
@@ -22,6 +25,9 @@ class RecentContractsWidget extends TableWidget
                 TextColumn::make('reference_no')
                     ->label('Reference No')
                     ->searchable(),
+                TextColumn::make('contract_description')
+                    ->label('Contract Description')
+                    ->searchable(),
                 TextColumn::make('proponent')
                     ->label('Contract Proponent')
                     ->searchable(),
@@ -31,18 +37,49 @@ class RecentContractsWidget extends TableWidget
                     ->searchable(),
                 TextColumn::make('status')
                     ->badge()
-                    ->colors([
-                        'violet' => 'pending',
-                        'info' => 'in-progress',
-                        'warning' => 'for-approval',
-                        'success' => 'executed',
-                        'danger' => 'due',
-                    ]),
+                    ->color(fn (string $state): string => match ($state) {
+                        'pending' => 'gray',
+                        'proponent-pending' => 'gray',
+                        'in-progress' => 'info',
+                        'for-approval' => 'primary',
+                        'for-execution' => 'info',
+                        'executed' => 'success',
+                        'due' => 'danger',
+                        default => 'primary',
+                    }),
                 TextColumn::make('updated_at')
                     ->label('Last Updated')
-                    ->dateTime()
+                    ->dateTime('M j, H:i')
                     ->timezone('Asia/Manila')
                     ->sortable(),
+            ])
+            ->filters([
+                SelectFilter::make('status')
+                    ->options([
+                        'pending' => 'Pending',
+                        'proponent-pending' => 'Pending with Proponent',
+                        'in-progress' => 'In-Progress',
+                        'for-approval' => 'For Approval',
+                        'for-execution' => 'For Execution',
+                        'executed' => 'Executed',
+                        'due' => 'Due',
+                    ]),
+                Filter::make('created_at')
+                    ->form([
+                        DatePicker::make('created_from'),
+                        DatePicker::make('created_until'),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query
+                            ->when(
+                                $data['created_from'],
+                                fn (Builder $query, $date): Builder => $query->whereDate('created_at', '>=', $date),
+                            )
+                            ->when(
+                                $data['created_until'],
+                                fn (Builder $query, $date): Builder => $query->whereDate('created_at', '<=', $date),
+                            );
+                    }),
             ])
             ->paginated(false);
     }

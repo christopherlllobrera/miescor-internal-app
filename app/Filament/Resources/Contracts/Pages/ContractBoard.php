@@ -6,6 +6,7 @@ use App\Filament\Resources\Contracts\ContractResource;
 use App\Models\Contract;
 use Filament\Actions\Action;
 use Filament\Actions\EditAction;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Infolists\Components\TextEntry;
@@ -102,19 +103,40 @@ class ContractBoard extends BoardResourcePage
                         $this->forceMoveCard($record->id, 'for-approval');
                         $this->dispatch('kanban-board-refresh');
                     }),
+                Action::make('markForExecution')
+                    ->label('For Execution')
+                    ->icon('heroicon-o-printer')
+                    ->color('info')
+                    ->visible(fn (Contract $record): bool => $record->status === 'for-approval')
+                    ->form([
+                        Textarea::make('remarks')->label('Remarks')->required(),
+                    ])
+                    ->modalHeading('Move to For Execution')
+                    ->modalDescription('Are you sure you want to move this contract to For Execution?')
+                    ->modalSubmitActionLabel('Yes, move it')
+                    ->action(function (Contract $record, array $data) {
+                        $record->contractRemarks()->create(['remark' => $data['remarks'], 'user_id' => auth()->id()]);
+                        $this->forceMoveCard($record->id, 'for-execution');
+                        $this->dispatch('kanban-board-refresh');
+                    }),
                 Action::make('markExecuted')
                     ->label('Execute')
                     ->icon('heroicon-o-check-circle')
                     ->color('success')
-                    ->visible(fn (Contract $record): bool => in_array($record->status, ['for-approval']))
+                    ->visible(fn (Contract $record): bool => in_array($record->status, ['for-execution']))
                     ->form([
                         Textarea::make('remarks')->label('Remarks')->required(),
+                        FileUpload::make('attachment')
+                            ->label('Attachment')
+                            ->required()
+                            ->directory('contract-attachments'),
                     ])
                     ->modalHeading('Move to Executed')
                     ->modalDescription('Are you sure you want to mark this contract as Executed? This action cannot be undone easily.')
                     ->modalSubmitActionLabel('Yes, execute it')
                     ->action(function (Contract $record, array $data) {
                         $record->contractRemarks()->create(['remark' => $data['remarks'], 'user_id' => auth()->id()]);
+                        $record->update(['attachment' => $data['attachment'] ?? null]);
                         $this->forceMoveCard($record->id, 'executed');
                         $this->dispatch('kanban-board-refresh');
                     }),
@@ -214,6 +236,11 @@ class ContractBoard extends BoardResourcePage
     protected function getHeaderActions(): array
     {
         return [
+            Action::make('switch')
+                ->label('Switch to Detailed View')
+                ->url(fn (): string => ContractResource::getUrl('list'))
+                ->color('gray')
+                ->visible(fn () => auth()->user()->can('create-contract')),
             Action::make('create')
                 ->label('New Contract')
                 ->url(fn (): string => ContractResource::getUrl('create'))
@@ -237,10 +264,32 @@ class ContractBoard extends BoardResourcePage
                         $arguments['beforeCardId'] ?? null
                     );
                 }),
+            Action::make('confirmMoveToForExecution')
+                ->extraAttributes(['style' => 'display: none;'])
+                ->form([
+                    Textarea::make('remarks')->label('Remarks')->required(),
+                ])
+                ->modalHeading('Move to For Execution')
+                ->modalDescription('Are you sure you want to move this contract to For Execution?')
+                ->modalSubmitActionLabel('Yes, move it')
+                ->action(function (array $arguments, array $data) {
+                    $contract = Contract::find($arguments['cardId']);
+                    $contract?->contractRemarks()->create(['remark' => $data['remarks'], 'user_id' => auth()->id()]);
+                    $this->forceMoveCard(
+                        $arguments['cardId'],
+                        $arguments['targetColumnId'],
+                        $arguments['afterCardId'] ?? null,
+                        $arguments['beforeCardId'] ?? null
+                    );
+                }),
             Action::make('confirmMoveToExecuted')
                 ->extraAttributes(['style' => 'display: none;'])
                 ->form([
                     Textarea::make('remarks')->label('Remarks')->required(),
+                    FileUpload::make('attachment')
+                        ->label('Attachment')
+                        ->required()
+                        ->directory('contract-attachments'),
                 ])
                 ->modalHeading('Move to Executed')
                 ->modalDescription('Are you sure you want to mark this contract as Executed? This action cannot be undone easily.')
@@ -248,6 +297,7 @@ class ContractBoard extends BoardResourcePage
                 ->action(function (array $arguments, array $data) {
                     $contract = Contract::find($arguments['cardId']);
                     $contract?->contractRemarks()->create(['remark' => $data['remarks'], 'user_id' => auth()->id()]);
+                    $contract?->update(['attachment' => $data['attachment'] ?? null]);
                     $this->forceMoveCard(
                         $arguments['cardId'],
                         $arguments['targetColumnId'],
@@ -302,7 +352,20 @@ class ContractBoard extends BoardResourcePage
             return;
         }
 
-        if ($contract->status === 'for-approval' && $targetColumnId === 'executed') {
+        if ($contract->status === 'for-approval' && $targetColumnId === 'for-execution') {
+            $this->mountAction('confirmMoveToForExecution', [
+                'cardId' => $cardId,
+                'targetColumnId' => $targetColumnId,
+                'afterCardId' => $afterCardId,
+                'beforeCardId' => $beforeCardId,
+            ]);
+
+            $this->dispatch('kanban-board-refresh');
+
+            return;
+        }
+
+        if ($contract->status === 'for-execution' && $targetColumnId === 'executed') {
             $this->mountAction('confirmMoveToExecuted', [
                 'cardId' => $cardId,
                 'targetColumnId' => $targetColumnId,
