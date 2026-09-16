@@ -42,7 +42,11 @@ class ContractBoard extends BoardResourcePage
         }
 
         if ($user->can('view-kanban-board-all')) {
-            $columns[] = Column::make('completed')->label('Completed')->icon('heroicon-o-check-circle')->color('success');
+            $columns[] = Column::make('for-execution')->label('For Execution')->icon('heroicon-o-printer')->color('info');
+        }
+        // Change to executed
+        if ($user->can('view-kanban-board-all')) {
+            $columns[] = Column::make('executed')->label('Executed')->icon('heroicon-o-check-circle')->color('success');
         }
 
         if ($user->can('view-kanban-board-all') || $user->can('view-kanban-board-due')) {
@@ -98,20 +102,20 @@ class ContractBoard extends BoardResourcePage
                         $this->forceMoveCard($record->id, 'for-approval');
                         $this->dispatch('kanban-board-refresh');
                     }),
-                Action::make('markCompleted')
-                    ->label('Complete')
+                Action::make('markExecuted')
+                    ->label('Execute')
                     ->icon('heroicon-o-check-circle')
                     ->color('success')
                     ->visible(fn (Contract $record): bool => in_array($record->status, ['for-approval']))
                     ->form([
                         Textarea::make('remarks')->label('Remarks')->required(),
                     ])
-                    ->modalHeading('Move to Completed')
-                    ->modalDescription('Are you sure you want to mark this contract as Completed? This action cannot be undone easily.')
-                    ->modalSubmitActionLabel('Yes, complete it')
+                    ->modalHeading('Move to Executed')
+                    ->modalDescription('Are you sure you want to mark this contract as Executed? This action cannot be undone easily.')
+                    ->modalSubmitActionLabel('Yes, execute it')
                     ->action(function (Contract $record, array $data) {
                         $record->contractRemarks()->create(['remark' => $data['remarks'], 'user_id' => auth()->id()]);
-                        $this->forceMoveCard($record->id, 'completed');
+                        $this->forceMoveCard($record->id, 'executed');
                         $this->dispatch('kanban-board-refresh');
                     }),
                 Action::make('backToInProgress')
@@ -233,14 +237,14 @@ class ContractBoard extends BoardResourcePage
                         $arguments['beforeCardId'] ?? null
                     );
                 }),
-            Action::make('confirmMoveToCompleted')
+            Action::make('confirmMoveToExecuted')
                 ->extraAttributes(['style' => 'display: none;'])
                 ->form([
                     Textarea::make('remarks')->label('Remarks')->required(),
                 ])
-                ->modalHeading('Move to Completed')
-                ->modalDescription('Are you sure you want to mark this contract as Completed? This action cannot be undone easily.')
-                ->modalSubmitActionLabel('Yes, complete it')
+                ->modalHeading('Move to Executed')
+                ->modalDescription('Are you sure you want to mark this contract as Executed? This action cannot be undone easily.')
+                ->modalSubmitActionLabel('Yes, execute it')
                 ->action(function (array $arguments, array $data) {
                     $contract = Contract::find($arguments['cardId']);
                     $contract?->contractRemarks()->create(['remark' => $data['remarks'], 'user_id' => auth()->id()]);
@@ -298,8 +302,8 @@ class ContractBoard extends BoardResourcePage
             return;
         }
 
-        if ($contract->status === 'for-approval' && $targetColumnId === 'completed') {
-            $this->mountAction('confirmMoveToCompleted', [
+        if ($contract->status === 'for-approval' && $targetColumnId === 'executed') {
+            $this->mountAction('confirmMoveToExecuted', [
                 'cardId' => $cardId,
                 'targetColumnId' => $targetColumnId,
                 'afterCardId' => $afterCardId,

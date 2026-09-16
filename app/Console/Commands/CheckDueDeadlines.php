@@ -21,7 +21,7 @@ class CheckDueDeadlines extends Command
             $query->where('turnaround_date', '<=', now()->toDateString())
                 ->orWhere('deadline', '<=', now()->toDateString());
         })
-            ->whereNotIn('status', ['due', 'completed'])
+            ->whereNotIn('status', ['due', 'executed'])
             ->get();
 
         // Get the current max position for 'due' status to prevent unique constraint violations
