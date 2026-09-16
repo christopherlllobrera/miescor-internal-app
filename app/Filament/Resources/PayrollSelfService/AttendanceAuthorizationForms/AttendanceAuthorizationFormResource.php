@@ -5,6 +5,7 @@ namespace App\Filament\Resources\PayrollSelfService\AttendanceAuthorizationForms
 use App\Filament\Resources\PayrollSelfService\AttendanceAuthorizationForms\Pages\CreateAttendanceAuthorizationForm;
 use App\Filament\Resources\PayrollSelfService\AttendanceAuthorizationForms\Pages\EditAttendanceAuthorizationForm;
 use App\Filament\Resources\PayrollSelfService\AttendanceAuthorizationForms\Pages\ListAttendanceAuthorizationForms;
+use App\Filament\Resources\PayrollSelfService\AttendanceAuthorizationForms\Pages\ListAttendanceAuthorizationFormsAlternative;
 use App\Filament\Resources\PayrollSelfService\AttendanceAuthorizationForms\Schemas\AttendanceAuthorizationFormForm;
 use App\Filament\Resources\PayrollSelfService\AttendanceAuthorizationForms\Tables\AttendanceAuthorizationFormsTable;
 use App\Models\AttendanceAuth;
@@ -48,6 +49,7 @@ class AttendanceAuthorizationFormResource extends Resource
     {
         return [
             'index' => ListAttendanceAuthorizationForms::route('/'),
+            'detailed' => ListAttendanceAuthorizationFormsAlternative::route('/detailed'),
             'create' => CreateAttendanceAuthorizationForm::route('/create'),
             'edit' => EditAttendanceAuthorizationForm::route('/{record}/edit'),
         ];

@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Filament\Resources\PSSAnnouncements\Pages;
+namespace App\Filament\Resources\PayrollSelfService\PSSAnnouncements\Pages;
 
-use App\Filament\Resources\PSSAnnouncements\PSSAnnouncementResource;
+use App\Filament\Resources\PayrollSelfService\PSSAnnouncements\PSSAnnouncementResource;
 use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ManageRecords;
 

@@ -3,11 +3,11 @@
 namespace App\Observers;
 
 use App\Models\Contract;
-use App\Notifications\ContractStatusUpdated;
-use Illuminate\Support\Facades\Log;
-use Filament\Notifications\Notification;
-use Illuminate\Support\Facades\Notification as IlluminateNotification;
 use App\Notifications\ContractDueNotification;
+use App\Notifications\ContractStatusUpdated;
+use Filament\Notifications\Notification;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Notification as IlluminateNotification;
 
 // Timely checks the status change
 class ContractObserver
@@ -22,8 +22,8 @@ class ContractObserver
 
     public function updating(Contract $contract): void
     {
-        if (in_array($contract->getOriginal('status'), ['pending', 'proponent-pending']) && $contract->isDirty('assigned_to') && !empty($contract->assigned_to)) {
-                $contract->status = 'in-progress';
+        if (in_array($contract->getOriginal('status'), ['pending', 'proponent-pending']) && $contract->isDirty('assigned_to') && ! empty($contract->assigned_to)) {
+            $contract->status = 'in-progress';
         }
     }
 

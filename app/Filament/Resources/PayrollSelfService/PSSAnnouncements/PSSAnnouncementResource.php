@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Filament\Resources\PSSAnnouncements;
+namespace App\Filament\Resources\PayrollSelfService\PSSAnnouncements;
 
-use App\Filament\Resources\PSSAnnouncements\Pages\ManagePSSAnnouncements;
+use App\Filament\Resources\PayrollSelfService\PSSAnnouncements\Pages\ManagePSSAnnouncements;
 use App\Models\PSSAnnouncement;
 use BackedEnum;
 use Filament\Actions\BulkActionGroup;

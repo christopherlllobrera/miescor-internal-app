@@ -5,6 +5,7 @@ namespace App\Filament\Resources\PayrollSelfService\LeaveRequests;
 use App\Filament\Resources\PayrollSelfService\LeaveRequests\Pages\CreateLeaveRequest;
 use App\Filament\Resources\PayrollSelfService\LeaveRequests\Pages\EditLeaveRequest;
 use App\Filament\Resources\PayrollSelfService\LeaveRequests\Pages\ListLeaveRequests;
+use App\Filament\Resources\PayrollSelfService\LeaveRequests\Pages\ListLeaveRequestsAlternative;
 use App\Filament\Resources\PayrollSelfService\LeaveRequests\Schemas\LeaveRequestForm;
 use App\Filament\Resources\PayrollSelfService\LeaveRequests\Tables\LeaveRequestsTable;
 use App\Models\LeaveRequest;
@@ -48,6 +49,7 @@ class LeaveRequestResource extends Resource
     {
         return [
             'index' => ListLeaveRequests::route('/'),
+            'detailed' => ListLeaveRequestsAlternative::route('/detailed'),
             'create' => CreateLeaveRequest::route('/create'),
             'edit' => EditLeaveRequest::route('/{record}/edit'),
         ];

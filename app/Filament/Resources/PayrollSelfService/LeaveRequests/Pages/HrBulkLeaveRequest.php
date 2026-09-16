@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources\PayrollSelfService\CustomPage;
+namespace App\Filament\Resources\PayrollSelfService\LeaveRequests\Pages;
 
 use App\Filament\Resources\PayrollSelfService\LeaveRequests\Schemas\LeaveRequestForm;
 use App\Models\Employee;

@@ -2,8 +2,8 @@
 
 namespace App\Notifications;
 
+use App\Models\Contract;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
@@ -14,7 +14,7 @@ class ContractDueNotification extends Notification
     /**
      * Create a new notification instance.
      */
-    public function __construct(public \App\Models\Contract $contract)
+    public function __construct(public Contract $contract)
     {
         //
     }
@@ -35,10 +35,10 @@ class ContractDueNotification extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject('Action Required: Contract Due Today - ' . $this->contract->reference_no)
+            ->subject('Action Required: Contract Due Today - '.$this->contract->reference_no)
             ->view('emails.contract-due', [
                 'contract' => $this->contract,
-                'notifiable' => $notifiable
+                'notifiable' => $notifiable,
             ]);
     }
 

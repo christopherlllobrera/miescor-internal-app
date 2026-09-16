@@ -5,6 +5,7 @@ namespace App\Filament\Resources\PayrollSelfService\OvertimeRequests;
 use App\Filament\Resources\PayrollSelfService\OvertimeRequests\Pages\CreateOvertimeRequest;
 use App\Filament\Resources\PayrollSelfService\OvertimeRequests\Pages\EditOvertimeRequest;
 use App\Filament\Resources\PayrollSelfService\OvertimeRequests\Pages\ListOvertimeRequests;
+use App\Filament\Resources\PayrollSelfService\OvertimeRequests\Pages\ListOvertimeRequestsAlternative;
 use App\Filament\Resources\PayrollSelfService\OvertimeRequests\Schemas\OvertimeRequestForm;
 use App\Filament\Resources\PayrollSelfService\OvertimeRequests\Tables\OvertimeRequestsTable;
 use App\Models\OvertimeRequest;
@@ -48,6 +49,7 @@ class OvertimeRequestResource extends Resource
     {
         return [
             'index' => ListOvertimeRequests::route('/'),
+            'detailed' => ListOvertimeRequestsAlternative::route('/detailed'),
             'create' => CreateOvertimeRequest::route('/create'),
             'edit' => EditOvertimeRequest::route('/{record}/edit'),
         ];

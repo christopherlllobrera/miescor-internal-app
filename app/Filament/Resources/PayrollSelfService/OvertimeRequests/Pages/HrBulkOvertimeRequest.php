@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources\PayrollSelfService\CustomPage;
+namespace App\Filament\Resources\PayrollSelfService\OvertimeRequests\Pages;
 
 use App\Models\Employee;
 use App\Models\OvertimeRequest;

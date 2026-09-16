@@ -50,6 +50,7 @@ class LeaveRequestForm
                                 'Service Agreement' => 'Service Agreement',
                                 'Meralco Seconded' => 'Meralco Seconded',
                             ])
+                            ->preload()->searchable()
                             ->live()
                             ->afterStateUpdated(fn (Set $set) => $set('type', null)),
                         Select::make('schedule')

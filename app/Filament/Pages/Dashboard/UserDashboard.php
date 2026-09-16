@@ -12,13 +12,13 @@ use Filament\Support\Icons\Heroicon;
 
 class UserDashboard extends Page
 {
-    protected static ?string $title = 'Payroll Self Service Overview';
+    protected static ?string $title = 'Payroll Self-Service Overview';
 
     protected static ?string $navigationLabel = 'PSS Overview';
 
     protected static string $routePath = 'user-dashboard';
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedHome;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCreditCard;
 
     protected static ?int $navigationSort = 1;
 

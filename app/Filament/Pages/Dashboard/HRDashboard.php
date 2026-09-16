@@ -15,7 +15,7 @@ class HRDashboard extends Page
 
     protected static string $routePath = 'hr-dashboard';
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedHome;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedUserGroup;
 
     protected static ?int $navigationSort = 2;
 
