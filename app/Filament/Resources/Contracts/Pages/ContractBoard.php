@@ -120,7 +120,7 @@ class ContractBoard extends BoardResourcePage
                     ->visible(fn (Contract $record): bool => $record->contractRemarks()->exists())
                     ->modalHeading('Remarks History')
                     ->modalContent(fn (Contract $record) => view('filament.components.remarks-list', [
-                        'remarks' => $record->contractRemarks()->latest()->get()
+                        'remarks' => $record->contractRemarks()->latest()->get(),
                     ]))
                     ->modalSubmitAction(false)
                     ->modalCancelActionLabel('Close'),

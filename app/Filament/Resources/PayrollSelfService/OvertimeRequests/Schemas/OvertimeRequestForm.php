@@ -44,7 +44,8 @@ class OvertimeRequestForm
                                 'Regular Work Pool' => 'Regular Work Pool',
                                 'Service Agreement' => 'Service Agreement',
                                 'Meralco Seconded' => 'Meralco Seconded',
-                            ]),
+                            ])
+                            ->preload()->searchable(),
                         Select::make('immediate_supervisor_id')
                             ->label('Immediate Supervisor (Approver)')
                             ->relationship('immediate_supervisor', 'EmpLName')

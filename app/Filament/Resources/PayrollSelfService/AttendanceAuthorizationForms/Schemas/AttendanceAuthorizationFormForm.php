@@ -36,6 +36,8 @@ class AttendanceAuthorizationFormForm
                             ->disabled(),
                         Select::make('employee_group')
                             ->label('Employee Group')
+                            ->preload()
+                            ->searchable()
                             ->options([
                                 'Regular' => 'Regular',
                                 'Probationary' => 'Probationary',

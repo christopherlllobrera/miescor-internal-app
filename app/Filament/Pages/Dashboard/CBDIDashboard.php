@@ -13,7 +13,7 @@ class CBDIDashboard extends Page
 
     protected static string $routePath = 'cbdi-dashboard';
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedHome;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedUsers;
 
     protected static ?int $navigationSort = 3;
 

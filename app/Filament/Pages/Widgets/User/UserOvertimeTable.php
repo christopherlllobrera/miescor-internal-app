@@ -60,7 +60,7 @@ class UserOvertimeTable extends TableWidget
                 ,
             ])
             ->deferLoading()
-            ->emptyStateHeading('No overtime yet')
+            ->emptyStateHeading('No Overtime yet')
             ->emptyStateDescription('Once you create your first overtime, it will appear here.')
             ->filters([
                 //

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources\PayrollSelfService\CustomPage;
+namespace App\Filament\Resources\PayrollSelfService\AttendanceAuthorizationForms\Pages;
 
 use App\Models\AttendanceAuth;
 use App\Models\Employee;
