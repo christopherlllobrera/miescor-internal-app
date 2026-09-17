@@ -1,18 +1,14 @@
 <?php
 
-namespace App\Filament\Resources\Contracts\Tables;
+namespace App\Filament\Resources\ArchivedContracts\Tables;
 
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Actions\Action;
 use App\Models\Contract;
-use Filament\Support\Icons\Heroicon;
 use Filament\Actions\ViewAction;
 
-class ContractsTable
+class ArchivedContractsTable
 {
     public static function configure(Table $table): Table
     {
@@ -35,19 +31,10 @@ class ContractsTable
                     ->searchable(),
                 TextColumn::make('status')
                     ->badge()
-                    ->color(fn (string $state): string => match ($state) {
-                        'pending' => 'gray',
-                        'proponent-pending' => 'gray',
-                        'in-progress' => 'info',
-                        'for-approval' => 'primary',
-                        'for-execution' => 'info',
-                        'executed' => 'success',
-                        'due' => 'danger',
-                        default => 'primary',
-                    }),
+                    ->color('success'),
                 TextColumn::make('updated_at')
-                    ->label('Last Updated')
-                    ->dateTime('M j, H:i')
+                    ->label('Archived At')
+                    ->dateTime('M j, Y H:i')
                     ->timezone('Asia/Manila')
                     ->sortable(),
             ])
@@ -63,12 +50,8 @@ class ContractsTable
                     ->openUrlInNewTab()
                     ->visible(fn (Contract $record): bool => filled($record->attachment)),
                 ViewAction::make(),
-                EditAction::make(),
             ])
             ->toolbarActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
-                ]),
             ]);
     }
 }

@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
+use Filament\Actions\Action;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
@@ -30,10 +31,10 @@ class ContractForm
                             ->dehydrated(false)
                             ->placeholder('Auto-generated upon save')
                             ->maxLength(255),
-                        Select::make('assigned_to')
+                        Select::make('assignees')
                             ->label('Assign To')
                             ->relationship(
-                                name: 'assignee',
+                                name: 'assignees',
                                 titleAttribute: 'EmpLName',
                                 modifyQueryUsing: fn ($query) => $query->whereHas('position', function ($q) {
                                     $q->where('PostDesc', 'Legal Counsel');
@@ -41,7 +42,15 @@ class ContractForm
                             )
                             ->getOptionLabelFromRecordUsing(fn ($record) => $record->full_name ?? "{$record->EmpLName}, {$record->EmpFName}")
                             ->preload()
+                            ->multiple()
                             ->searchable(['EmpLName', 'EmpFName'])
+                            ->suffixAction(
+                                Action::make('clear')
+                                    ->icon('heroicon-m-trash')
+                                    ->color('danger')
+                                    ->tooltip('Clear all assignees')
+                                    ->action(fn ($set) => $set('assignees', []))
+                            )
                             ->visibleOn('edit'),
                         Select::make('proponent')
                             ->label('Contract Proponent')
@@ -83,6 +92,11 @@ class ContractForm
                             ->validationMessages([
                                 'required' => 'Please provide a description for this contract.',
                             ])
+                            ->columnSpanFull(),
+                        TextInput::make('attachment')
+                            ->label('Contract SharePoint Link')
+                            ->url()
+                            ->maxLength(255)
                             ->columnSpanFull(),
                         Checkbox::make('has_turnaround_time')
                             ->label('Has turnaround time')

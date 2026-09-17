@@ -1,6 +1,6 @@
 <div class="space-y-4">
     @forelse ($remarks as $remark)
-        <div class="p-4 bg-gray-50 rounded-lg border border-gray-200 dark:bg-gray-800 dark:border-gray-700">
+        <div class="p-4 mb-2 bg-gray-50 rounded-lg border border-gray-200 dark:bg-gray-800 dark:border-gray-700">
             <div class="flex justify-between items-center mb-2">
                 <span class="text-sm font-semibold text-gray-700 dark:text-gray-300">
                     {{ $remark->user?->name ?? 'User' }}
