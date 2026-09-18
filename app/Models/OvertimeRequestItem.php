@@ -2,9 +2,23 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @property int $id
+ * @property int $overtime_request_id
+ * @property Carbon|null $date
+ * @property string|null $ot_start
+ * @property string|null $ot_end
+ * @property float|null $number_of_hours
+ * @property string|null $reason
+ * @property int|null $created_by
+ * @property int|null $updated_by
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ */
 class OvertimeRequestItem extends Model
 {
     protected $fillable = [

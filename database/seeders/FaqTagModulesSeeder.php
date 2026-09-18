@@ -70,6 +70,6 @@ class FaqTagModulesSeeder extends Seeder
             ['updated_at']      // columns to update on conflict
         );
 
-        $this->command?->info('FAQ tags seeded/updated: '.count($rows));
+        $this->command->info('FAQ tags seeded/updated: '.count($rows));
     }
 }

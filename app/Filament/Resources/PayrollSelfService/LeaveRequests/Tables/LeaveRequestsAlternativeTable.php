@@ -34,11 +34,13 @@ class LeaveRequestsAlternativeTable
                         ->label('Employee Name')
                         ->weight(FontWeight::Bold)
                         ->sortable(query: function (Builder $query, string $direction): Builder {
+                            $dir = strtolower($direction) === 'desc' ? 'desc' : 'asc';
+
                             return $query
                                 ->join('tblEmployee', 'tblEmployee.EmpNo', '=', 'leave_requests.empNo')
-                                ->orderBy('tblEmployee.EmpLName', $direction)
-                                ->orderBy('tblEmployee.EmpFName', $direction)
-                                ->orderBy('tblEmployee.EmpMName', $direction)
+                                ->orderBy('tblEmployee.EmpLName', $dir)
+                                ->orderBy('tblEmployee.EmpFName', $dir)
+                                ->orderBy('tblEmployee.EmpMName', $dir)
                                 ->select('leave_requests.*');
                         })
                         ->searchable(query: function (Builder $query, string $search): Builder {
@@ -149,7 +151,7 @@ class LeaveRequestsAlternativeTable
                     ->label('More Details')
                     ->icon('heroicon-o-clipboard-document-list')
                     ->color('info')
-                    ->modalHeading(fn (LeaveRequest $record): string => "Leave Request #{$record->id} — Details (".($record->employee?->full_name ?? 'Record').')')
+                    ->modalHeading(fn (LeaveRequest $record): string => "Leave Request #{$record->id} — Details (".($record->employee->full_name ?? 'Record').')')
                     ->modalWidth('4xl')
                     ->fillForm(fn (LeaveRequest $record): array => [
                         'employee_name' => $record->employee?->full_name,

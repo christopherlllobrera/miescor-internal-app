@@ -8,7 +8,7 @@ use Illuminate\Support\Str;
 
 class FAQModulesSeeder extends Seeder
 {
-    public function run()
+    public function run(): void
     {
         // Ensure faq_body can hold long content. Attempt to modify column to LONGTEXT.
         try {
@@ -28,6 +28,11 @@ class FAQModulesSeeder extends Seeder
         }
 
         $handle = fopen($path, 'r');
+        if ($handle === false) {
+            $this->command->error('Unable to open CSV file: '.$path);
+
+            return;
+        }
 
         // Skip header
         fgetcsv($handle);

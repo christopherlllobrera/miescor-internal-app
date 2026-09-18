@@ -2,11 +2,23 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Spatie\Activitylog\Models\Activity;
 use Spatie\Activitylog\Models\Concerns\LogsActivity;
 use Spatie\Activitylog\Support\LogOptions;
 
+/**
+ * @property string $DeptNo
+ * @property string|null $DeptDesc
+ * @property int|null $CreatedBy
+ * @property int|null $UpdatedBy
+ * @property Carbon|null $DateCreated
+ * @property Carbon|null $DateUpdated
+ * @property-read User|null $createdBy
+ * @property-read User|null $updatedBy
+ */
 class Department extends Model
 {
     use LogsActivity;
@@ -57,12 +69,18 @@ class Department extends Model
         $activity->subject_id = null;
     }
 
-    public function createdBy()
+    /**
+     * @return BelongsTo<User, $this>
+     */
+    public function createdBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'CreatedBy', 'id');
     }
 
-    public function updatedBy()
+    /**
+     * @return BelongsTo<User, $this>
+     */
+    public function updatedBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'UpdatedBy', 'id');
     }

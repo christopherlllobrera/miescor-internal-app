@@ -2,9 +2,24 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @property int $id
+ * @property int $attendance_auth_id
+ * @property Carbon|null $date
+ * @property string|null $time_in
+ * @property string|null $time_out
+ * @property string|null $request_time_in
+ * @property string|null $request_time_out
+ * @property string|null $remarks
+ * @property int|null $created_by
+ * @property int|null $updated_by
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ */
 class AttendanceAuthItem extends Model
 {
     protected $fillable = [

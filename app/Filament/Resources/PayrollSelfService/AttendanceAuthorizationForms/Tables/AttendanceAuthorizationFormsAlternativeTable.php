@@ -36,11 +36,13 @@ class AttendanceAuthorizationFormsAlternativeTable
                         ->label('Employee Name')
                         ->weight(FontWeight::Bold)
                         ->sortable(query: function (Builder $query, string $direction): Builder {
+                            $dir = strtolower($direction) === 'desc' ? 'desc' : 'asc';
+
                             return $query
                                 ->join('tblEmployee', 'tblEmployee.EmpNo', '=', 'attendance_auths.empNo')
-                                ->orderBy('tblEmployee.EmpLName', $direction)
-                                ->orderBy('tblEmployee.EmpFName', $direction)
-                                ->orderBy('tblEmployee.EmpMName', $direction)
+                                ->orderBy('tblEmployee.EmpLName', $dir)
+                                ->orderBy('tblEmployee.EmpFName', $dir)
+                                ->orderBy('tblEmployee.EmpMName', $dir)
                                 ->select('attendance_auths.*');
                         })
                         ->searchable(query: function (Builder $query, string $search): Builder {
@@ -69,7 +71,7 @@ class AttendanceAuthorizationFormsAlternativeTable
 
                             return "Dates: {$dates->first()} (+".($dates->count() - 1).' more)';
                         })
-                        ->tooltip(fn (AttendanceAuth $record): ?string => $record->items->map(fn ($item) => $item->date?->format('Y-m-d'))->filter()->implode(', ')),
+                        ->tooltip(fn (AttendanceAuth $record): string => $record->items->map(fn ($item) => $item->date?->format('Y-m-d'))->filter()->implode(', ')),
 
                     TextColumn::make('status')
                         ->label('Status')
@@ -153,7 +155,7 @@ class AttendanceAuthorizationFormsAlternativeTable
                     ->icon('heroicon-o-clipboard-document-list')
                     ->color('info')
                     // ->button()
-                    ->modalHeading(fn (AttendanceAuth $record): string => "AAF #{$record->id} — Items Details (".($record->employee?->full_name ?? 'Record').')')
+                    ->modalHeading(fn (AttendanceAuth $record): string => "AAF #{$record->id} — Items Details (".($record->employee->full_name ?? 'Record').')')
                     ->modalWidth('4xl')
                     ->fillForm(fn (AttendanceAuth $record): array => [
                         'employee_name' => $record->employee?->full_name,

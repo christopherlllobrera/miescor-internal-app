@@ -14,11 +14,10 @@ use Filament\Actions\ExportBulkAction;
 use Filament\Forms\Components\DatePicker;
 use Filament\Tables\Columns\SelectColumn;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Columns\TextInputColumn;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Collection;
+use Illuminate\Database\Eloquent\Collection;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class AttendanceAuthorizationFormsTable
@@ -121,9 +120,9 @@ class AttendanceAuthorizationFormsTable
                                 return [
                                     $record->id,
                                     $record->empNo,
-                                    $record->employee?->full_name ?? '—',
+                                    $record->employee->full_name ?? '—',
                                     $record->employee_group ?? '',
-                                    $record->employee?->location?->LocDesc ?? '',
+                                    $record->employee->location->LocDesc ?? '',
                                     $record->reason ?? '',
                                     $record->status ?? '',
                                     $aafDates,

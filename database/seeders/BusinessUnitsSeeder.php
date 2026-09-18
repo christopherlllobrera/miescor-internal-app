@@ -17,7 +17,7 @@ class BusinessUnitsSeeder extends Seeder
         if (File::exists($sqlPath)) {
             $sql = File::get($sqlPath);
             $sql = str_replace("\xEF\xBB\xBF", '', $sql);
-            DB::unprepared($sql);
+            DB::connection()->getPdo()->exec($sql);
         }
     }
 }
