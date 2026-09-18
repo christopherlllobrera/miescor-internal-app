@@ -3,10 +3,10 @@
 namespace App\Filament\Resources\Contracts\Schemas;
 
 use Carbon\Carbon;
+use Filament\Actions\Action;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
-use Filament\Actions\Action;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
@@ -78,7 +78,7 @@ class ContractForm
                             ->validationMessages([
                                 'required' => 'Please select the type of contract.',
                             ]),
-                        Textarea::make('contract_title')
+                        TextInput::make('contract_title')
                             ->label('Contract Title')
                             ->maxLength(255)
                             ->required()
@@ -92,7 +92,8 @@ class ContractForm
                             ->validationMessages([
                                 'required' => 'Please provide a description for this contract.',
                             ])
-                            ->columnSpanFull(),
+                            ->columnSpanFull()
+                            ->rows(3),
                         TextInput::make('attachment')
                             ->label('Contract SharePoint Link')
                             ->url()
@@ -106,7 +107,7 @@ class ContractForm
                                 if ($state) {
                                     $days = (int) ($get('turnaround_days') ?? 3);
                                     $set('turnaround_days', $days);
-                                    $set('turnaround_date', now()->addDays($days)->toDateString());
+                                    $set('turnaround_date', now()->addWeekdays($days)->toDateString());
                                 } else {
                                     $set('turnaround_days', null);
                                     $set('turnaround_date', null);
@@ -122,7 +123,7 @@ class ContractForm
                         DatePicker::make('turnaround_date')
                             ->label('Turnaround Date')
                             ->prefixIcon('heroicon-o-calendar')
-                            ->default(fn (): string => now()->addDays(3)->toDateString())
+                            ->default(fn (): string => now()->addWeekdays(3)->toDateString())
                             ->required(fn (Get $get) => (bool) $get('has_turnaround_time'))
                             ->afterOrEqual('today')
                             ->validationMessages([

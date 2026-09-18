@@ -47,22 +47,26 @@ class ContractObserver
             }
         }
 
-        if (($statusChanged || $assigneeChanged) && $contract->assignee && $contract->assignee->EmpEmailAd) {
-            try {
-                if ($statusChanged && $contract->status === 'due') {
-                    IlluminateNotification::route('mail', $contract->assignee->EmpEmailAd)
-                        ->notify(new ContractDueNotification($contract));
-                } else {
-                    IlluminateNotification::route('mail', $contract->assignee->EmpEmailAd)
-                        ->notify(new ContractStatusUpdated($contract));
+        if ($statusChanged) {
+            foreach ($contract->assignees as $assignee) {
+                if ($assignee->EmpEmailAd) {
+                    try {
+                        if ($contract->status === 'due') {
+                            IlluminateNotification::route('mail', $assignee->EmpEmailAd)
+                                ->notify(new ContractDueNotification($contract));
+                        } else {
+                            IlluminateNotification::route('mail', $assignee->EmpEmailAd)
+                                ->notify(new ContractStatusUpdated($contract));
+                        }
+                    } catch (\Exception $e) {
+                        Log::error('Failed to notify assignee: '.$e->getMessage());
+                        Notification::make()
+                            ->title('Email Failed')
+                            ->body('Could not send status update email to the assignee.')
+                            ->danger()
+                            ->send();
+                    }
                 }
-            } catch (\Exception $e) {
-                Log::error('Failed to notify assignee: '.$e->getMessage());
-                Notification::make()
-                    ->title('Email Failed')
-                    ->body('Could not send status update email to the assignee.')
-                    ->danger()
-                    ->send();
             }
         }
     }

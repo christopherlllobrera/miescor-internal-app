@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\ContractProponents\Schemas;
 
+use Filament\Actions\Action;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
@@ -26,6 +27,13 @@ class ContractProponentForm
                         TagsInput::make('business_unit')
                             ->label('Business Units')
                             ->placeholder('Type a business unit and press enter')
+                            ->suffixAction(
+                                Action::make('clear')
+                                    ->icon('heroicon-m-trash')
+                                    ->color('danger')
+                                    ->tooltip('Clear all business units')
+                                    ->action(fn ($set) => $set('business_unit', []))
+                            )
                             ->nullable(),
                     ]),
             ]);

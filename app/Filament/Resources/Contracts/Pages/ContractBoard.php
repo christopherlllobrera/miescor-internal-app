@@ -4,6 +4,8 @@ namespace App\Filament\Resources\Contracts\Pages;
 
 use App\Filament\Resources\Contracts\ContractResource;
 use App\Models\Contract;
+use App\Models\Employee;
+use App\Notifications\ContractStatusUpdated;
 use Filament\Actions\Action;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\FileUpload;
@@ -69,29 +71,40 @@ class ContractBoard extends BoardResourcePage
                     ->icon('heroicon-o-user-plus')
                     ->visible(fn (Contract $record): bool => in_array($record->status, ['pending', 'proponent-pending']))
                     ->form([
-                        Select::make('assignees')
+                        Select::make('assignee_ids')
                             ->label('Assign To')
-                            ->relationship(
-                                name: 'assignees',
-                                titleAttribute: 'EmpLName',
-                                modifyQueryUsing: fn ($query) => $query->whereHas('position', function ($q) {
-                                    $q->where('PostDesc', 'Legal Counsel');
-                                })
-                            )
-                            ->getOptionLabelFromRecordUsing(fn ($record) => $record->full_name ?? "{$record->EmpLName}, {$record->EmpFName}")
+                            ->options(fn () => Employee::whereHas('position', function ($q) {
+                                $q->where('PostDesc', 'Legal Counsel');
+                            })->get()->mapWithKeys(fn ($record) => [
+                                $record->EmpNo => $record->full_name ?? "{$record->EmpLName}, {$record->EmpFName}",
+                            ]))
+                            ->default(fn (Contract $record) => $record->assignees->pluck('EmpNo')->toArray())
                             ->preload()
                             ->multiple()
-                            ->searchable(['EmpLName', 'EmpFName'])
+                            ->searchable()
                             ->suffixAction(
                                 Action::make('clear')
                                     ->icon('heroicon-m-trash')
                                     ->color('danger')
                                     ->tooltip('Clear all assignees')
-                                    ->action(fn ($set) => $set('assignees', []))
+                                    ->action(fn ($set) => $set('assignee_ids', []))
                             ),
                     ])
                     ->action(function (Contract $record, array $data) {
-                        $record->assignees()->sync($data['assignees']);
+                        $assigneeIds = $data['assignee_ids'] ?? [];
+                        $record->assignees()->sync($assigneeIds);
+
+                        if (count($assigneeIds) > 0 && in_array($record->status, ['pending', 'proponent-pending'])) {
+                            $record->update(['status' => 'in-progress']);
+                        } else {
+                            foreach ($record->assignees as $assignee) {
+                                if ($assignee->EmpEmailAd) {
+                                    Notification::route('mail', $assignee->EmpEmailAd)
+                                        ->notify(new ContractStatusUpdated($record));
+                                }
+                            }
+                        }
+
                         $this->dispatch('kanban-board-refresh');
                     }),
                 Action::make('markForApproval')
