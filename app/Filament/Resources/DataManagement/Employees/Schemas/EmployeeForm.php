@@ -4,7 +4,6 @@ namespace App\Filament\Resources\DataManagement\Employees\Schemas;
 
 use App\Models\Position;
 use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -166,12 +165,6 @@ class EmployeeForm
                         TextInput::make('PHILHEALTHNo')->label('PhilHealth No.'),
                         TextInput::make('MedCardNo')->label('Medical Card No.'),
                         TextInput::make('MedCardPolicyNo')->label('Medical Policy No.'),
-                        FileUpload::make('ItemPict')
-                            ->label('Profile Picture')
-                            ->image()
-                            ->directory('employee_photos')
-                            ->visibility('public')
-                            ->columnspanFull(),
                     ]),
             ]);
     }
