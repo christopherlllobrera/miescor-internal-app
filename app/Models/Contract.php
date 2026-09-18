@@ -6,6 +6,7 @@ use App\Observers\ContractObserver;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Spatie\Activitylog\Models\Concerns\LogsActivity;
 use Spatie\Activitylog\Support\LogOptions;
 
@@ -66,6 +67,11 @@ class Contract extends Model
     public function assignee(): BelongsTo
     {
         return $this->belongsTo(Employee::class, 'assigned_to', 'EmpLName');
+    }
+
+    public function assignees(): BelongsToMany
+    {
+        return $this->belongsToMany(Employee::class, 'contract_assignees', 'contract_id', 'emp_no', 'id', 'EmpNo');
     }
 
     public function contractProponent(): BelongsTo

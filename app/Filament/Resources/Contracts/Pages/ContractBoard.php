@@ -69,10 +69,10 @@ class ContractBoard extends BoardResourcePage
                     ->icon('heroicon-o-user-plus')
                     ->visible(fn (Contract $record): bool => in_array($record->status, ['pending', 'proponent-pending']))
                     ->form([
-                        Select::make('assigned_to')
+                        Select::make('assignees')
                             ->label('Assign To')
                             ->relationship(
-                                name: 'assignee',
+                                name: 'assignees',
                                 titleAttribute: 'EmpLName',
                                 modifyQueryUsing: fn ($query) => $query->whereHas('position', function ($q) {
                                     $q->where('PostDesc', 'Legal Counsel');
@@ -80,11 +80,18 @@ class ContractBoard extends BoardResourcePage
                             )
                             ->getOptionLabelFromRecordUsing(fn ($record) => $record->full_name ?? "{$record->EmpLName}, {$record->EmpFName}")
                             ->preload()
+                            ->multiple()
                             ->searchable(['EmpLName', 'EmpFName'])
-                            ->required(),
+                            ->suffixAction(
+                                Action::make('clear')
+                                    ->icon('heroicon-m-trash')
+                                    ->color('danger')
+                                    ->tooltip('Clear all assignees')
+                                    ->action(fn ($set) => $set('assignees', []))
+                            ),
                     ])
                     ->action(function (Contract $record, array $data) {
-                        $record->update(['assigned_to' => $data['assigned_to']]);
+                        $record->assignees()->sync($data['assignees']);
                         $this->dispatch('kanban-board-refresh');
                     }),
                 Action::make('markForApproval')
@@ -175,31 +182,14 @@ class ContractBoard extends BoardResourcePage
                         ->badge()
                         ->size('lg')
                         ->color('primary'),
-                    TextEntry::make('assigned_to')
+                    TextEntry::make('assignees.EmpLName')
                         ->hiddenLabel()
                         ->icon('heroicon-o-user')
+                        ->badge()
                         ->color('gray')
                         ->placeholder('Unassigned')
                         ->visible(fn (Contract $record): bool => $record->status !== 'pending' && $record->status !== 'proponent-pending')
-                        ->formatStateUsing(function (?string $state): ?string {
-                            if (! $state) {
-                                return null;
-                            }
-
-                            if (str_contains($state, ',')) {
-                                $parts = explode(',', $state);
-
-                                return 'Atty. '.trim($parts[0]);
-                            }
-
-                            if (str_starts_with($state, 'Atty.')) {
-                                $parts = explode(' ', $state);
-
-                                return 'Atty. '.end($parts);
-                            }
-
-                            return 'Atty. '.$state;
-                        }),
+                        ->formatStateUsing(fn (string $state): string => 'Atty. '.$state),
                     CardFlex::make([
                         TextEntry::make('turnaround_date')
                             ->hiddenLabel()
@@ -330,7 +320,7 @@ class ContractBoard extends BoardResourcePage
     {
         $contract = Contract::find($cardId);
 
-        if (! in_array($targetColumnId, ['pending', 'proponent-pending']) && blank($contract?->assigned_to)) {
+        if (! in_array($targetColumnId, ['pending', 'proponent-pending']) && $contract?->assignees()->count() === 0) {
             Notification::make()
                 ->warning()
                 ->title('The contract is not assigned to anyone yet.')
