@@ -25,7 +25,7 @@ return new class extends Migration
             $table->string('EmpEmerContact', 50)->nullable();
             $table->string('EmpEmailAd', 50)->nullable();
             $table->string('PictName', 50)->nullable();
-            $table->longText('ItemPict')->binary()->nullable();
+            $table->binary('ItemPict')->nullable();
             $table->string('Gender', 50)->nullable();
             $table->string('TINNo', 50)->nullable();
             $table->string('SSSNo', 50)->nullable();

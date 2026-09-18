@@ -18,7 +18,7 @@ class LocationSeeder extends Seeder
             $sql = File::get($sqlPath);
             $sql = str_replace("\xEF\xBB\xBF", '', $sql);
             $sql = str_replace('`tblLocationA`', '`tblLocation`', $sql);
-            DB::unprepared($sql);
+            DB::connection()->getPdo()->exec($sql);
         }
     }
 }

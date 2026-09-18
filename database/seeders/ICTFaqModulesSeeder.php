@@ -169,7 +169,7 @@ class ICTFaqModulesSeeder extends Seeder
         }
     }
 
-    private function toBool($value): bool
+    private function toBool(mixed $value): bool
     {
         if (is_bool($value)) {
             return $value;
@@ -179,9 +179,9 @@ class ICTFaqModulesSeeder extends Seeder
         return in_array($v, ['1', 'true', 'yes', 'y'], true);
     }
 
-    private function parseTimestamp($value): ?Carbon
+    private function parseTimestamp(mixed $value): ?Carbon
     {
-        if (! $value) {
+        if (! $value || ! is_string($value)) {
             return null;
         }
         try {
@@ -191,7 +191,7 @@ class ICTFaqModulesSeeder extends Seeder
         }
     }
 
-    private function nullableInt($value): ?int
+    private function nullableInt(mixed $value): ?int
     {
         if ($value === '' || $value === null) {
             return null;

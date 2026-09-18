@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\PayrollSelfService\OvertimeRequests\Tables;
 
 use App\Models\OvertimeRequest;
+use App\Models\OvertimeRequestItem;
 use Carbon\Carbon;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
@@ -36,11 +37,13 @@ class OvertimeRequestsAlternativeTable
                         ->label('Employee Name')
                         ->weight(FontWeight::Bold)
                         ->sortable(query: function (Builder $query, string $direction): Builder {
+                            $dir = strtolower($direction) === 'desc' ? 'desc' : 'asc';
+
                             return $query
                                 ->join('tblEmployee', 'tblEmployee.EmpNo', '=', 'overtime_requests.empNo')
-                                ->orderBy('tblEmployee.EmpLName', $direction)
-                                ->orderBy('tblEmployee.EmpFName', $direction)
-                                ->orderBy('tblEmployee.EmpMName', $direction)
+                                ->orderBy('tblEmployee.EmpLName', $dir)
+                                ->orderBy('tblEmployee.EmpFName', $dir)
+                                ->orderBy('tblEmployee.EmpMName', $dir)
                                 ->select('overtime_requests.*');
                         })
                         ->searchable(query: function (Builder $query, string $search): Builder {
@@ -69,7 +72,7 @@ class OvertimeRequestsAlternativeTable
 
                             return "Dates: {$dates->first()} (+".($dates->count() - 1).' more)';
                         })
-                        ->tooltip(fn (OvertimeRequest $record): ?string => $record->items->map(fn ($item) => $item->date?->format('Y-m-d'))->filter()->implode(', ')),
+                        ->tooltip(fn (OvertimeRequest $record): string => $record->items->map(fn ($item) => $item->date?->format('Y-m-d'))->filter()->implode(', ')),
 
                     TextColumn::make('status')
                         ->label('Status')
@@ -143,13 +146,13 @@ class OvertimeRequestsAlternativeTable
                     ->label('More Details')
                     ->icon('heroicon-o-clipboard-document-list')
                     ->color('info')
-                    ->modalHeading(fn (OvertimeRequest $record): string => "Overtime Request #{$record->id} — Items Details (".($record->employee?->full_name ?? 'Record').')')
+                    ->modalHeading(fn (OvertimeRequest $record): string => "Overtime Request #{$record->id} — Items Details (".($record->employee->full_name ?? 'Record').')')
                     ->modalWidth('4xl')
                     ->fillForm(fn (OvertimeRequest $record): array => [
                         'employee_name' => $record->employee?->full_name,
                         'schedule' => $record->schedule,
                         'status' => $record->status,
-                        'items' => $record->items->map(fn ($item): array => [
+                        'items' => $record->items->map(fn (OvertimeRequestItem $item): array => [
                             'date' => $item->date?->format('Y-m-d'),
                             'ot_start' => $item->ot_start,
                             'ot_end' => $item->ot_end,

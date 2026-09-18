@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\DB;
 
 class DepartmentSeeder extends Seeder
 {
-    public function run()
+    public function run(): void
     {
         DB::unprepared("
             INSERT INTO `tblDepartment` (`id`, `DeptNo`, `DeptDesc`, `CreatedBy`, `DateCreated`, `UpdatedBy`, `DateUpdated`) VALUES

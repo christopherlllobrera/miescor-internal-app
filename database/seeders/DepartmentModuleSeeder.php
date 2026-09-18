@@ -4,7 +4,6 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 
 class DepartmentModuleSeeder extends Seeder
 {
@@ -106,9 +105,9 @@ class DepartmentModuleSeeder extends Seeder
         foreach ($departments as $dept) {
             DB::table('department_modules')->insert([
                 'cms_department_name' => $dept['dept_no'], // Stores DeptNo as per form logic
-                'cms_department_slug' => $dept['slug'] ?: Str::slug($dept['full']),
-                'cms_department_description' => $dept['desc'] ?? '',
-                'cms_icon' => $dept['icon'] ?? '',
+                'cms_department_slug' => $dept['slug'],
+                'cms_department_description' => $dept['desc'],
+                'cms_icon' => $dept['icon'],
                 'cms_banner' => '',
                 'created_at' => now(),
                 'updated_at' => now(),

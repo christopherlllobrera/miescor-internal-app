@@ -2,10 +2,33 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Spatie\Activitylog\Models\Concerns\LogsActivity;
 use Spatie\Activitylog\Support\LogOptions;
 
+/**
+ * @property int $id
+ * @property string|null $cms_department
+ * @property string|null $cms_department_name
+ * @property string|null $cms_department_slug
+ * @property string|null $cms_department_description
+ * @property string|null $cms_banner
+ * @property string|null $cms_icon
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @property-read string $display_name
+ * @property-read string $icon_component
+ * @property-read string $image_url
+ * @property-read Department|null $department
+ * @property-read Collection<int, DirectoryModule> $directories
+ * @property-read Collection<int, DownloadableModule> $downloadables
+ * @property-read Collection<int, WorkflowModule> $workflows
+ * @property-read Collection<int, FAQModule> $faqs
+ */
 class DepartmentModule extends Model
 {
     use LogsActivity;
@@ -50,27 +73,42 @@ class DepartmentModule extends Model
     }
 
     // Relationships
-    public function directories()
+    /**
+     * @return HasMany<DirectoryModule, $this>
+     */
+    public function directories(): HasMany
     {
         return $this->hasMany(DirectoryModule::class, 'cms_department_id');
     }
 
-    public function downloadables()
+    /**
+     * @return HasMany<DownloadableModule, $this>
+     */
+    public function downloadables(): HasMany
     {
         return $this->hasMany(DownloadableModule::class, 'cms_department_id');
     }
 
-    public function workflows()
+    /**
+     * @return HasMany<WorkflowModule, $this>
+     */
+    public function workflows(): HasMany
     {
         return $this->hasMany(WorkflowModule::class, 'cms_department_id');
     }
 
-    public function faqs()
+    /**
+     * @return HasMany<FAQModule, $this>
+     */
+    public function faqs(): HasMany
     {
         return $this->hasMany(FAQModule::class, 'cms_department_id');
     }
 
-    public function department()
+    /**
+     * @return BelongsTo<Department, $this>
+     */
+    public function department(): BelongsTo
     {
         return $this->belongsTo(Department::class, 'cms_department_name', 'DeptNo');
     }
@@ -83,7 +121,7 @@ class DepartmentModule extends Model
             return $deptNo;
         }
 
-        $words = explode(' ', $dept->DeptDesc);
+        $words = explode(' ', $dept->DeptDesc ?? '');
 
         return collect($words)->map(function ($word, $index) {
             $word = strtolower($word);
@@ -130,21 +168,21 @@ class DepartmentModule extends Model
 
         // Otherwise, find the DeptDesc from the related Department model and format it
         // Note: this uses your existing 'department' relationship
-        if ($this->department) {
+        if ($this->department && $this->department->DeptDesc) {
             return self::formatString($this->department->DeptDesc);
         }
 
         return $this->cms_department_name ?? 'Unnamed Department';
     }
 
-    public function setPocImageAttribute($value)
+    public function setPocImageAttribute(mixed $value): void
     {
         $this->attributes['cms_banner'] = $value;
     }
 
     public function getImageUrlAttribute(): string
     {
-        if (! empty($this->cms_banner) && is_string($this->cms_banner)) {
+        if (! empty($this->cms_banner)) {
             $finfo = new \finfo(FILEINFO_MIME_TYPE);
             $mimeType = $finfo->buffer($this->cms_banner) ?: 'image/jpeg';
 

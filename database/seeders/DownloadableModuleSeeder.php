@@ -19,7 +19,12 @@ class DownloadableModuleSeeder extends Seeder
         // Ensure target directory exists
         Storage::disk($disk)->makeDirectory($targetDir);
 
-        $rows = array_map('str_getcsv', file($csvPath));
+        $lines = file($csvPath);
+        if ($lines === false) {
+            return;
+        }
+
+        $rows = array_map('str_getcsv', $lines);
 
         foreach ($rows as $row) {
             // Skip invalid / short rows

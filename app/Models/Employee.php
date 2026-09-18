@@ -8,6 +8,14 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Spatie\Activitylog\Models\Concerns\LogsActivity;
 use Spatie\Activitylog\Support\LogOptions;
 
+/**
+ * @property string $EmpNo
+ * @property string|null $EmpLName
+ * @property string|null $EmpFName
+ * @property string|null $EmpMName
+ * @property string $full_name
+ * @property-read Location|null $location
+ */
 class Employee extends Model
 {
     use LogsActivity;
