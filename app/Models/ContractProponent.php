@@ -10,9 +10,11 @@ class ContractProponent extends Model
         'proponent_name',
         'proponent_code',
         'business_unit',
+        'departments',
     ];
 
     protected $casts = [
         'business_unit' => 'array',
+        'departments' => 'array',
     ];
 }
