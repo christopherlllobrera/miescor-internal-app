@@ -33,4 +33,14 @@ class EditContract extends EditRecord
 
         return $data;
     }
+
+    protected function afterSave(): void
+    {
+        $contract = $this->record;
+
+        if (in_array($contract->status, ['pending', 'proponent-pending']) && $contract->assignees()->exists()) {
+            $contract->status = 'in-progress';
+            $contract->save();
+        }
+    }
 }

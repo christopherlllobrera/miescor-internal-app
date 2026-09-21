@@ -64,6 +64,7 @@ class ServicesPanelProvider extends PanelProvider
             ->topbar(false)
             ->simplePageMaxContentWidth(Width::Small)
             ->databaseNotifications()
+            ->databaseNotificationsPolling('1s')
             ->globalSearch(false)
             ->sidebarCollapsibleOnDesktop()
             ->defaultThemeMode(ThemeMode::Light)
