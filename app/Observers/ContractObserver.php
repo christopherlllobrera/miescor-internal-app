@@ -69,6 +69,81 @@ class ContractObserver
                 }
             }
         }
+
+        // For Approval Mail
+        // if ($statusChanged) {
+        //     if ($contract->status === 'for-approval' && $contract->getOriginal('status') === 'in-progress') {
+        //         $notifiableEmployees = Employee::whereHas('position', function ($query) {
+        //             $query->whereIn('PostDesc', ['General Counsel', 'Legal Staff']);
+        //         })->get();
+
+        //         foreach ($notifiableEmployees as $employees) {
+        //             if ($employees->EmpEmailAd) {
+        //                 try {
+        //                     IlluminateNotification::route('mail', $employees->EmpEmailAd)
+        //                         ->notify(new ContractStatusUpdated($contract));
+        //                 } catch (\Exception $e) {
+        //                     Log::error('Failed to notify Legal Staff and General Counsel: ' . $e->getMessage());
+        //                     Notification::make()
+        //                         ->title('Email Failed')
+        //                         ->body('Could not send status update email to the Legal Staff and General Counsel.')
+        //                         ->danger()
+        //                         ->send();
+        //                 }
+        //             }
+        //         }
+        //     }
+        // }
+
+        // For Execution Mail
+        // if ($statusChanged) {
+        //     if ($contract->status === 'for-execution' && $contract->getOriginal('status') === 'for-approval') {
+        //         $notifiableEmployees = Employee::whereHas('position', function ($query) {
+        //             $query->whereIn('PostDesc', ['General Counsel', 'Legal Staff', 'Legal Counsel']);
+        //         })->get();
+
+        //         foreach ($notifiableEmployees as $employees) {
+        //             if ($employees->EmpEmailAd) {
+        //                 try {
+        //                     IlluminateNotification::route('mail', $employees->EmpEmailAd)
+        //                         ->notify(new ContractStatusUpdated($contract));
+        //                 } catch (\Exception $e) {
+        //                     Log::error('Failed to notify Legal Staff and General Counsel: ' . $e->getMessage());
+        //                     Notification::make()
+        //                         ->title('Email Failed')
+        //                         ->body('Could not send status update email to the Legal Staff and General Counsel.')
+        //                         ->danger()
+        //                         ->send();
+        //                 }
+        //             }
+        //         }
+        //     }
+        // }
+
+        // Executed Mail
+        // if ($statusChanged) {
+        //     if ($contract->status === 'executed' && $contract->getOriginal('status') === 'for-execution') {
+        //         $notifiableEmployees = Employee::whereHas('position', function ($query) {
+        //             $query->whereIn('PostDesc', ['General Counsel', 'Legal Staff']);
+        //         })->get();
+
+        //         foreach ($notifiableEmployees as $employees) {
+        //             if ($employees->EmpEmailAd) {
+        //                 try {
+        //                     IlluminateNotification::route('mail', $employees->EmpEmailAd)
+        //                         ->notify(new ContractStatusUpdated($contract));
+        //                 } catch (\Exception $e) {
+        //                     Log::error('Failed to notify Legal Staff and General Counsel: ' . $e->getMessage());
+        //                     Notification::make()
+        //                         ->title('Email Failed')
+        //                         ->body('Could not send status update email to the Legal Staff and General Counsel.')
+        //                         ->danger()
+        //                         ->send();
+        //                 }
+        //             }
+        //         }
+        //     }
+        // }
     }
 
     /**
