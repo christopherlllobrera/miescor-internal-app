@@ -3,6 +3,7 @@
 namespace App\Observers;
 
 use App\Models\Contract;
+use App\Notifications\ContractAssignedForReview;
 use App\Notifications\ContractDueNotification;
 use App\Notifications\ContractStatusUpdated;
 use Filament\Notifications\Notification;
@@ -66,6 +67,21 @@ class ContractObserver
                             ->danger()
                             ->send();
                     }
+                }
+            }
+        }
+
+        if ($statusChanged && $contract->status === 'proponent-pending') {
+            foreach ($contract->reviewers as $reviewer) {
+                try {
+                    $reviewer->notify(new ContractAssignedForReview($contract));
+                } catch (\Exception $e) {
+                    Log::error('Failed to notify reviewer: '.$e->getMessage());
+                    Notification::make()
+                        ->title('Email Failed')
+                        ->body('Could not send status update email to the proponent reviewer.')
+                        ->danger()
+                        ->send();
                 }
             }
         }

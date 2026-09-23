@@ -2,6 +2,9 @@
 
 namespace App\Filament\Resources\ContractManagement\Contracts\Schemas;
 
+use App\Models\BusinessUnits;
+use App\Models\ContractProponent;
+use App\Models\Department;
 use Carbon\Carbon;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Checkbox;
@@ -12,9 +15,6 @@ use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
-use App\Models\ContractProponent;
-use App\Models\BusinessUnits;
-use App\Models\Department;
 use Filament\Schemas\Schema;
 
 class ContractForm
@@ -55,6 +55,23 @@ class ContractForm
                                     ->action(fn ($set) => $set('assignees', []))
                             )
                             ->visibleOn('edit'),
+                        Select::make('reviewers')
+                            ->label('Proponent Personnel (Reviewers)')
+                            ->relationship(
+                                name: 'reviewers',
+                                titleAttribute: 'username'
+                            )
+                            ->getOptionLabelFromRecordUsing(fn ($record) => $record->name ?? $record->username)
+                            ->preload()
+                            ->multiple()
+                            ->searchable()
+                            ->suffixAction(
+                                Action::make('clear_reviewers')
+                                    ->icon('heroicon-m-trash')
+                                    ->color('danger')
+                                    ->tooltip('Clear all reviewers')
+                                    ->action(fn ($set) => $set('reviewers', []))
+                            ),
                         Select::make('proponent')
                             ->label('Contract Proponent')
                             ->relationship('contractProponent', 'proponent_name')
@@ -76,6 +93,7 @@ class ContractForm
                                 if (! $proponent || empty($proponent->business_unit)) {
                                     return [];
                                 }
+
                                 return BusinessUnits::whereIn('BusinessUnitNo', (array) $proponent->business_unit)
                                     ->pluck('BusinessUnitDesc', 'BusinessUnitNo')
                                     ->toArray();
@@ -94,6 +112,7 @@ class ContractForm
                                 if (! $proponent || empty($proponent->departments)) {
                                     return [];
                                 }
+
                                 return Department::whereIn('DeptNo', (array) $proponent->departments)
                                     ->pluck('DeptDesc', 'DeptNo')
                                     ->toArray();
