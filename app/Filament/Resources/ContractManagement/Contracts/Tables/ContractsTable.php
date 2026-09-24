@@ -2,15 +2,14 @@
 
 namespace App\Filament\Resources\ContractManagement\Contracts\Tables;
 
+use App\Models\Contract;
+use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-use Filament\Actions\Action;
-use App\Models\Contract;
-use Filament\Support\Icons\Heroicon;
-use Filament\Actions\ViewAction;
 
 class ContractsTable
 {
@@ -45,6 +44,10 @@ class ContractsTable
                         'due' => 'danger',
                         default => 'primary',
                     }),
+                TextColumn::make('review_progress')
+                    ->label('Review Progress')
+                    ->badge()
+                    ->color(fn (string $state): string => $state === 'No reviewers assigned' ? 'gray' : (str_contains($state, '0/') ? 'warning' : 'success')),
                 TextColumn::make('updated_at')
                     ->label('Last Updated')
                     ->dateTime('M j, H:i')

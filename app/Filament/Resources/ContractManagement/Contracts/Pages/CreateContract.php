@@ -4,6 +4,7 @@ namespace App\Filament\Resources\ContractManagement\Contracts\Pages;
 
 use App\Filament\Resources\ContractManagement\Contracts\ContractResource;
 use App\Models\Contract;
+use App\Notifications\ContractAssignedForReview;
 use Filament\Resources\Pages\CreateRecord;
 
 class CreateContract extends CreateRecord
@@ -38,5 +39,15 @@ class CreateContract extends CreateRecord
         $data['updated_by'] = null;
 
         return $data;
+    }
+
+    protected function afterCreate(): void
+    {
+        $contract = $this->record;
+
+        // Notify all assigned reviewers
+        foreach ($contract->reviewers as $reviewer) {
+            $reviewer->notify(new ContractAssignedForReview($contract));
+        }
     }
 }

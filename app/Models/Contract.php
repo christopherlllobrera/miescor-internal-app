@@ -83,4 +83,22 @@ class Contract extends Model
     {
         return $this->hasMany(ContractRemark::class);
     }
+
+    public function reviewers(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'contract_reviews')
+            ->withPivot('status', 'reviewed_at')
+            ->withTimestamps();
+    }
+
+    public function getReviewProgressAttribute(): string
+    {
+        $total = $this->reviewers()->count();
+        if ($total === 0) {
+            return 'No reviewers assigned';
+        }
+        $completed = $this->reviewers()->wherePivot('status', 'reviewed')->count();
+
+        return "{$completed}/{$total} done";
+    }
 }
