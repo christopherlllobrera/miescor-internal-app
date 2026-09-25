@@ -37,7 +37,7 @@ class ContractStatusUpdated extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject('Contract Status Updated: '.$this->contract->reference_no)
+            ->subject('Status Update: Contract '.$this->contract->contract_title)
             ->view('emails.contract-status-updated', [
                 'contract' => $this->contract,
                 'notifiable' => $notifiable,
@@ -47,8 +47,8 @@ class ContractStatusUpdated extends Notification
     public function toDatabase(object $notifiable): array
     {
         return FilamentNotification::make()
-            ->title('Contract Status Updated')
-            ->body('The status for the contract "'.$this->contract->reference_no.' is now '.$this->contract->status)
+            ->title('Statud Updated: Contract')
+            ->body('The status for the contract "'.$this->contract->contract_title.' is now '.$this->contract->status)
             ->success()
             ->getDatabaseMessage();
     }

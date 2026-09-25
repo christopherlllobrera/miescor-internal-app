@@ -65,10 +65,31 @@ class MyContractReviews extends Page implements HasTable
                             'status' => 'reviewed',
                             'reviewed_at' => now(),
                         ]);
-                        Notification::make()
-                            ->title('Contract marked as reviewed')
-                            ->success()
-                            ->send();
+
+                        // Check if all assigned reviewers have now reviewed the contract
+                        $pendingReviewsCount = $record->reviewers()->wherePivot('status', 'pending')->count();
+                        
+                        if ($pendingReviewsCount === 0 && $record->attachment) {
+                            $sharePoint = app(\App\Services\SharePointService::class);
+                            $locked = $sharePoint->lockDocumentByUrl($record->attachment);
+                            
+                            if ($locked) {
+                                Notification::make()
+                                    ->title('Contract fully reviewed and document locked in SharePoint')
+                                    ->success()
+                                    ->send();
+                            } else {
+                                Notification::make()
+                                    ->title('Contract fully reviewed, but failed to lock SharePoint document')
+                                    ->warning()
+                                    ->send();
+                            }
+                        } else {
+                            Notification::make()
+                                ->title('Contract marked as reviewed')
+                                ->success()
+                                ->send();
+                        }
                     }),
             ]);
     }
