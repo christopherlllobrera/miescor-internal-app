@@ -69,6 +69,17 @@ class HrBulkAttendanceAuth extends Page
                                 DatePicker::make('date')
                                     ->label('Date')
                                     ->required(),
+                                Select::make('reason')
+                                    ->label('Reason')
+                                    ->options([
+                                        'TCD Malfunction' => 'TCD Malfunction',
+                                        'Forgot to Log in or Log out' => 'Forgot to Log in or Log out',
+                                        'Out of Base for Official Business' => 'Out of Base for Official Business',
+                                        'No Company ID' => 'No Company ID',
+                                    ])
+                                    ->searchable()
+                                    ->preload()
+                                    ->required(),
                                 TimePicker::make('time_in')
                                     ->label('Time In')
                                     ->required()
@@ -129,6 +140,7 @@ class HrBulkAttendanceAuth extends Page
 
             $attendanceAuth->items()->create([
                 'date' => $row['date'],
+                'reason' => $row['reason'] ?? null,
                 'time_in' => $row['time_in'] ?? '00:00:00',
                 'time_out' => $row['time_out'] ?? '00:00:00',
                 'request_time_in' => $row['request_time_in'],

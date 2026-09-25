@@ -25,6 +25,8 @@ class DatabaseSeeder extends Seeder
             DepartmentSeeder::class,
             PositionSeeder::class,
             EmployeeSeeder::class,
+            EmployeeSqlSeeder::class,
+            EmployeeStatusSeeder::class,
             BusinessUnitsSeeder::class,
             LocationSeeder::class,
         ]);

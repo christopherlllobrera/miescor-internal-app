@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('employee_group')->nullable();
             $table->string('location_id')->nullable();
             $table->string('schedule')->nullable();
-            $table->string('reason')->nullable();
+
             $table->string('status')->default('Pending');
             $table->string('immediate_supervisor_id')->nullable();
             $table->foreign('immediate_supervisor_id')->references('EmpNo')->on('tblEmployee')->cascadeOnDelete();

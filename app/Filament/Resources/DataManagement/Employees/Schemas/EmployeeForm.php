@@ -9,6 +9,7 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
+use Illuminate\Support\Facades\DB;
 
 class EmployeeForm
 {
@@ -48,6 +49,14 @@ class EmployeeForm
                             'MALE' => 'Male',
                             'FEMALE' => 'Female',
                         ]),
+                        Select::make('CivilNo')
+                            ->label('Civil Status')
+                            ->options([
+                                1 => 'Single',
+                                2 => 'Married',
+                                3 => 'Widowed',
+                                4 => 'Separated',
+                            ]),
                         DatePicker::make('BirthDate')->label('Birth Date'),
                     ]),
 
@@ -70,6 +79,18 @@ class EmployeeForm
                     ])
                     ->description('Company-related information.')
                     ->schema([
+                        Select::make('CompNo')
+                            ->label('Company / Business Unit')
+                            ->relationship('businessUnit', 'BusinessUnitDesc')
+                            ->searchable()
+                            ->preload(),
+
+                        Select::make('LocNo')
+                            ->label('Location')
+                            ->relationship('location', 'LocDesc')
+                            ->searchable()
+                            ->preload(),
+
                         Select::make('DeptNo')
                             ->label('Department')
                             ->relationship('department', 'DeptDesc')
@@ -89,6 +110,30 @@ class EmployeeForm
                             })
                             ->searchable()
                             ->preload(),
+
+                        Select::make('EmpStatusNo')
+                            ->label('Employment Status')
+                            ->options(function () {
+                                $fromDb = DB::table('tblEmpStatus')->pluck('EmpStatusDesc', 'EmpStatusNo')->toArray();
+                                if (! empty($fromDb)) {
+                                    return $fromDb;
+                                }
+
+                                return [
+                                    1 => 'Regular',
+                                    2 => 'Probationary',
+                                    3 => 'Contractual',
+                                    4 => 'Project-Based',
+                                ];
+                            }),
+
+                        Select::make('StatusNo')
+                            ->label('Employee Status')
+                            ->options([
+                                7 => 'Active',
+                                8 => 'Inactive',
+                                1 => 'Pending',
+                            ]),
 
                         DatePicker::make('DateHired')->label('Date Hired'),
                         DatePicker::make('RegularizationDate')->label('Regularization Date'),

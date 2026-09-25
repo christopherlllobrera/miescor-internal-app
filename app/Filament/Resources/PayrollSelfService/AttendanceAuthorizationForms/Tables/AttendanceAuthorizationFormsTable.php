@@ -12,9 +12,10 @@ use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ExportBulkAction;
 use Filament\Forms\Components\DatePicker;
-use Filament\Tables\Columns\SelectColumn;
+use Filament\Support\Enums\Width;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -25,18 +26,18 @@ class AttendanceAuthorizationFormsTable
     public static function configure(Table $table): Table
     {
         return $table
+            ->modifyQueryUsing(fn (Builder $query): Builder => $query->with(['employee.location', 'items']))
             ->columns([
-                TextColumn::make('id')->label('ID'),
+                // TextColumn::make('id')->label('ID'),
                 TextColumn::make('employee.full_name')
                     ->label('Employee')
                     ->searchable(['EmpFName', 'EmpLName']),
-                TextColumn::make('employee_group')
-                    ->label('Employee Group')
-                    ->sortable(),
-                TextColumn::make('employee.location.LocDesc')
-                    ->label('Sub Area')
-                    ->searchable(),
-                TextColumn::make('status_display')
+                TextColumn::make('reason')
+                    ->label('Reason')
+                    ->state(fn (AttendanceAuth $record): string => $record->items->pluck('reason')->filter()->unique()->implode(', ') ?: '—')
+                    ->badge()
+                    ->color('gray'),
+                TextColumn::make('status')
                     ->badge()
                     ->state(fn ($record) => $record->status)
                     ->color(fn (string $state): string => match ($state) {
@@ -45,12 +46,6 @@ class AttendanceAuthorizationFormsTable
                         default => 'warning',
                     })
                     ->label('Status'),
-                SelectColumn::make('status')
-                    ->options([
-                        'Approved' => 'Approved',
-                        'Rejected' => 'Rejected',
-                        'Pending' => 'Pending',
-                    ]),
                 TextColumn::make('created_at')
                     ->label('Date Filed')
                     ->date()
@@ -84,6 +79,20 @@ class AttendanceAuthorizationFormsTable
 
                         return $indicators;
                     }),
+                SelectFilter::make('reason')
+                    ->label('Reason')
+                    ->options([
+                        'TCD Malfunction' => 'TCD Malfunction',
+                        'Forgot to Log in or Log out' => 'Forgot to Log in or Log out',
+                        'Out of Base for Official Business' => 'Out of Base for Official Business',
+                        'No Company ID' => 'No Company ID',
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query->when(
+                            $data['value'] ?? null,
+                            fn (Builder $q, $reason) => $q->whereHas('items', fn (Builder $itemQuery) => $itemQuery->where('reason', $reason))
+                        );
+                    }),
             ])
             ->recordActions([
                 EditAction::make(),
@@ -91,7 +100,10 @@ class AttendanceAuthorizationFormsTable
             ->toolbarActions([
                 BulkActionGroup::make([
                     ExportBulkAction::make()
+                        ->columnMappingColumns(3)
+                        ->modalHeading('Export Attendance Authorization Records')
                         ->label('Export to Excel / CSV')
+                        ->modalWidth(Width::ThreeExtraLarge)
                         ->exporter(AttendanceAuthExporter::class),
                     BulkAction::make('export_selected_text')
                         ->label('Export to Text (.txt)')
@@ -123,7 +135,7 @@ class AttendanceAuthorizationFormsTable
                                     $record->employee->full_name ?? '—',
                                     $record->employee_group ?? '',
                                     $record->employee->location->LocDesc ?? '',
-                                    $record->reason ?? '',
+                                    $record->items->pluck('reason')->filter()->unique()->implode(', '),
                                     $record->status ?? '',
                                     $aafDates,
                                     $record->remarks ?? '',

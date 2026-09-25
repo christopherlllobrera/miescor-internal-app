@@ -69,10 +69,20 @@ class FAQModuleForm
                                 if ($user && $user->hasRole('Department PIC') && $user->empNo) {
                                     $employee = Employee::where('EmpNo', $user->empNo)->first();
                                     if ($employee && $employee->DeptNo) {
-                                        $deptGroup = substr($employee->DeptNo, 0, 4);
-                                        $departmentModule = DepartmentModule::where('cms_department_name', 'like', $deptGroup.'%')->first();
+                                        $dept = Department::where('DeptNo', $employee->DeptNo)
+                                            ->orWhere('CostCntrNo', $employee->DeptNo)
+                                            ->first();
+                                        $costCenter = $dept?->CostCntrNo ?? $employee->DeptNo;
 
-                                        return $departmentModule ? $departmentModule->id : null;
+                                        if ($costCenter) {
+                                            $deptGroup = substr($costCenter, 0, 4);
+                                            $departmentModule = DepartmentModule::where(function ($q) use ($deptGroup) {
+                                                $q->where('cms_department_cost_center', 'like', $deptGroup.'%')
+                                                    ->orWhere('cms_department_name', 'like', $deptGroup.'%');
+                                            })->first();
+
+                                            return $departmentModule ? $departmentModule->id : null;
+                                        }
                                     }
                                 }
 
@@ -80,37 +90,27 @@ class FAQModuleForm
                             })
                             ->disabled(fn () => auth()->user()->hasRole('Department PIC'))
                             ->options(function () {
-                                // preload departments to avoid N+1 queries
-                                $departments = Department::all()->keyBy('DeptNo');
+                                $user = auth()->user();
+                                if ($user && $user->hasRole('Department PIC') && $user->empNo) {
+                                    $employee = Employee::where('EmpNo', $user->empNo)->first();
+                                    if ($employee && $employee->DeptNo) {
+                                        $dept = Department::where('DeptNo', $employee->DeptNo)
+                                            ->orWhere('CostCntrNo', $employee->DeptNo)
+                                            ->first();
+                                        $costCenter = $dept?->CostCntrNo ?? $employee->DeptNo;
 
-                                return DepartmentModule::query()
-                                    ->select('id', 'cms_department_name')
-                                    ->get()
-                                    ->mapWithKeys(function ($module) use ($departments) {
-                                        $dept = $departments[$module->cms_department_name] ?? null;
+                                        if ($costCenter) {
+                                            $deptGroup = substr($costCenter, 0, 4);
 
-                                        if (! $dept) {
-                                            return [];
+                                            return DepartmentModule::where(function ($q) use ($deptGroup) {
+                                                $q->where('cms_department_cost_center', 'like', $deptGroup.'%')
+                                                    ->orWhere('cms_department_name', 'like', $deptGroup.'%');
+                                            })->get()->pluck('display_name', 'id')->toArray();
                                         }
-                                        $words = explode(' ', $dept->DeptDesc);
-                                        $formatted = collect($words)->map(function ($word, $index) {
-                                            $word = strtolower($word);
-                                            $smallWords = ['and', 'or', 'of', 'the', 'in', 'on', 'at', 'to', 'for'];
-                                            if ($index > 0 && in_array($word, $smallWords)) {
-                                                return $word;
-                                            }
-                                            if (strlen($word) <= 3) {
-                                                return strtoupper($word);
-                                            }
+                                    }
+                                }
 
-                                            return ucfirst($word);
-                                        })->join(' ');
-
-                                        return [
-                                            $module->id => $formatted,
-                                        ];
-                                    })
-                                    ->toArray();
+                                return DepartmentModule::all()->pluck('display_name', 'id')->toArray();
                             }),
                         Select::make('faq_tag_id')
                             ->options(function (callable $get) {

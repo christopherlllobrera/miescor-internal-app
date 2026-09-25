@@ -12,10 +12,15 @@ use Spatie\Activitylog\Support\LogOptions;
 /**
  * @property string $DeptNo
  * @property string|null $DeptDesc
+ * @property int|null $BUNo
+ * @property string|null $CostCntrNo
+ * @property int|null $LocNo
  * @property int|null $CreatedBy
  * @property int|null $UpdatedBy
  * @property Carbon|null $DateCreated
  * @property Carbon|null $DateUpdated
+ * @property-read BusinessUnits|null $businessUnit
+ * @property-read Location|null $location
  * @property-read User|null $createdBy
  * @property-read User|null $updatedBy
  */
@@ -26,6 +31,9 @@ class Department extends Model
     protected $fillable = [
         'DeptNo',
         'DeptDesc',
+        'BUNo',
+        'CostCntrNo',
+        'LocNo',
         'CreatedBy',
         'UpdatedBy',
         'DateCreated',
@@ -70,6 +78,14 @@ class Department extends Model
     }
 
     /**
+     * @return BelongsTo<BusinessUnits, $this>
+     */
+    public function businessUnit(): BelongsTo
+    {
+        return $this->belongsTo(BusinessUnits::class, 'BUNo', 'BusinessUnitNo');
+    }
+
+    /**
      * @return BelongsTo<User, $this>
      */
     public function createdBy(): BelongsTo
@@ -83,5 +99,24 @@ class Department extends Model
     public function updatedBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'UpdatedBy', 'id');
+    }
+
+    /**
+     * @return BelongsTo<Location, $this>
+     */
+    public function location(): BelongsTo
+    {
+        return $this->belongsTo(Location::class, 'LocNo', 'LocNo');
+    }
+
+    public function getLocationAttribute(): ?Location
+    {
+        if (! $this->LocNo) {
+            return null;
+        }
+
+        return Location::where('LocNo', (string) $this->LocNo)
+            ->orWhere('LocCode', "Code{$this->LocNo}")
+            ->first();
     }
 }

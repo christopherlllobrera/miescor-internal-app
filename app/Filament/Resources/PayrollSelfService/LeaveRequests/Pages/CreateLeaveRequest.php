@@ -5,12 +5,25 @@ namespace App\Filament\Resources\PayrollSelfService\LeaveRequests\Pages;
 use App\Filament\Resources\PayrollSelfService\LeaveRequests\LeaveRequestResource;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\CreateRecord;
+use Livewire\Attributes\Url;
 
 class CreateLeaveRequest extends CreateRecord
 {
     protected static string $resource = LeaveRequestResource::class;
 
     protected static bool $canCreateAnother = false;
+
+    #[Url]
+    public ?string $type = null;
+
+    protected function fillForm(): void
+    {
+        parent::fillForm();
+
+        if ($this->type) {
+            $this->data['type'] = $this->type;
+        }
+    }
 
     protected function getRedirectUrl(): string
     {

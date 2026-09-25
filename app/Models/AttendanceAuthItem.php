@@ -25,6 +25,7 @@ class AttendanceAuthItem extends Model
     protected $fillable = [
         'attendance_auth_id',
         'date',
+        'reason',
         'time_in',
         'time_out',
         'request_time_in',

@@ -15,6 +15,7 @@ use Spatie\Activitylog\Support\LogOptions;
  * @property string|null $EmpMName
  * @property string $full_name
  * @property-read Location|null $location
+ * @property-read EmployeeStatus|null $employeeStatus
  */
 class Employee extends Model
 {
@@ -67,6 +68,10 @@ class Employee extends Model
 
     public $timestamps = false;
 
+    protected $hidden = [
+        'ItemPict',
+    ];
+
     // Activity Logs
     public function getActivitylogOptions(): LogOptions
     {
@@ -74,6 +79,7 @@ class Employee extends Model
             ->useLogName('Employee')
             ->setDescriptionForEvent(fn (string $event) => "Employee has been {$event}")
             ->logAll()
+            ->logExcept(['ItemPict'])
             ->logOnlyDirty()
             ->dontLogEmptyChanges();
     }
@@ -98,8 +104,18 @@ class Employee extends Model
         return $this->belongsTo(Location::class, 'LocNo', 'LocNo');
     }
 
+    public function businessUnit(): BelongsTo
+    {
+        return $this->belongsTo(BusinessUnits::class, 'CompNo', 'BusinessUnitNo');
+    }
+
     public function driver(): HasOne
     {
         return $this->hasOne(Driver::class, 'empNo', 'EmpNo');
+    }
+
+    public function employeeStatus(): BelongsTo
+    {
+        return $this->belongsTo(EmployeeStatus::class, 'EmpStatusNo', 'EmpStatusNo');
     }
 }

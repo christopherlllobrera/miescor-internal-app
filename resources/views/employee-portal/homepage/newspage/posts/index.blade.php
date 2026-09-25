@@ -1,6 +1,6 @@
 
 
-<div class="max-w-screen-4xl mx-auto w-full flex flex-col">
+<div class="max-w-screen-4xl mx-auto w-full min-h-screen flex flex-col">
     @include('employee-portal.homepage.navigation')
 
     <main class="grow pt-20 md:pt-24">

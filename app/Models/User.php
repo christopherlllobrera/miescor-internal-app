@@ -144,7 +144,20 @@ class User extends Authenticatable implements CanResetPassword, FilamentUser, Ha
 
     public function getFilamentAvatarUrl(): ?string
     {
-        return $this->avatar_url ? Storage::url($this->avatar_url) : null;
+        return $this->avatar_url;
+    }
+
+    public function getAvatarUrlAttribute(?string $value): ?string
+    {
+        if ($value && Storage::disk('public')->exists($value)) {
+            return Storage::disk('public')->url($value);
+        }
+
+        if ($this->employee && ! empty($this->employee->ItemPict)) {
+            return route('users.avatar', $this);
+        }
+
+        return null;
     }
 
     public function getFilamentEmailAuthenticationAddress(): string

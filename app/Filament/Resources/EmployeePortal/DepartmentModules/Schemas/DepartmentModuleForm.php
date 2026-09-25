@@ -37,9 +37,10 @@ class DepartmentModuleForm
                         Select::make('cms_department_name')
                             ->options(function () {
                                 return Department::query()
-                                    ->where('DeptNo', 'like', '%100')
+                                    ->where('CostCntrNo', 'like', '%100')
                                     ->orderBy('DeptDesc')
                                     ->get()
+                                    ->unique('CostCntrNo')
                                     ->mapWithKeys(function ($dept) {
                                         $words = explode(' ', $dept->DeptDesc);
 
@@ -61,7 +62,7 @@ class DepartmentModuleForm
                                             return ucfirst($word);
                                         })->join(' ');
 
-                                        return [$dept->DeptNo => $formatted];
+                                        return [$dept->CostCntrNo => $formatted];
                                     })
                                     ->toArray();
                             })
@@ -71,8 +72,8 @@ class DepartmentModuleForm
                             ->live(onBlur: true)
                             ->disabledOn('edit')
                             ->afterStateUpdated(function ($state, callable $set) {
-                                // Get the department description based on the selected DeptNo
-                                $dept = Department::where('DeptNo', $state)->first();
+                                // Get the first department matching this cost center
+                                $dept = Department::where('CostCntrNo', $state)->first();
 
                                 if ($dept) {
                                     // Convert to sentence case (lowercase with first letter capitalized)

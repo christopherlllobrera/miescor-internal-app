@@ -44,7 +44,7 @@ class MyProfile extends Page
         $user = Filament::auth()->user();
 
         $this->editProfileForm->fill([
-            'avatar_url' => $user->avatar_url,
+            'avatar_url' => $user->getRawOriginal('avatar_url'),
             'username' => $user->username,
             'comp_email' => $user->comp_email,
         ]);
@@ -77,7 +77,8 @@ class MyProfile extends Page
                             ->imageEditor()
                             ->disk('public')
                             ->directory('avatars')
-                            ->rules(['max:1024']),
+                            ->rules(['max:1024'])
+                            ->helperText(fn () => Filament::auth()->user()?->employee?->ItemPict ? 'Your avatar automatically defaults to your company ID photo (ItemPict).' : null),
                         TextInput::make('username')
                             ->label('Name')
                             ->required(),

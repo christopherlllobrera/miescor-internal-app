@@ -18,6 +18,13 @@ class EditEmployee extends EditRecord
         ];
     }
 
+    protected function mutateFormDataBeforeFill(array $data): array
+    {
+        unset($data['ItemPict']);
+
+        return $data;
+    }
+
     protected function mutateFormDataBeforeSave(array $data): array
     {
         $data['UpdatedBy'] = auth()->user()->id;

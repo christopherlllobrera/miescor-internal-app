@@ -2,6 +2,7 @@
 
 namespace App\Filament\Clusters\Workflow\WorkflowModules\Tables;
 
+use App\Models\Department;
 use App\Models\DepartmentModule;
 use App\Models\Employee;
 use Filament\Actions\BulkActionGroup;
@@ -66,16 +67,25 @@ class WorkflowModulesTable
 
                 $employee = Employee::where('EmpNo', $user->empNo)->first();
 
-                if (! $employee || ! $employee->DeptNo) {
-                    return $query->whereRaw('1 = 0');
-                }
+                $dept = Department::where('DeptNo', $employee->DeptNo)
+                    ->orWhere('CostCntrNo', $employee->DeptNo)
+                    ->first();
+
+                $costCenter = $dept?->CostCntrNo ?? $employee->DeptNo;
 
                 // 3. Department PIC Logic
                 if ($user->hasRole('Department PIC')) {
-                    $deptGroup = substr($employee->DeptNo, 0, 4);
+                    if (! $costCenter) {
+                        return $query->whereRaw('1 = 0');
+                    }
+
+                    $deptGroup = substr($costCenter, 0, 4);
 
                     return $query->whereHas('department', function (Builder $q) use ($deptGroup) {
-                        $q->where('cms_department_name', 'like', $deptGroup.'%');
+                        $q->where(function (Builder $sub) use ($deptGroup) {
+                            $sub->where('cms_department_cost_center', 'like', $deptGroup.'%')
+                                ->orWhere('cms_department_name', 'like', $deptGroup.'%');
+                        });
                     });
                 }
 

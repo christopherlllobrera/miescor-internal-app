@@ -2,6 +2,7 @@
 
 namespace App\Filament\Clusters\Workflow\WorkflowTagModules\Schemas;
 
+use App\Models\Department;
 use App\Models\DepartmentModule;
 use App\Models\Employee;
 use Filament\Forms\Components\Select;
@@ -47,10 +48,20 @@ class WorkflowTagModuleForm
                                 if ($user && $user->hasRole('Department PIC') && $user->empNo) {
                                     $employee = Employee::where('EmpNo', $user->empNo)->first();
                                     if ($employee && $employee->DeptNo) {
-                                        $deptGroup = substr($employee->DeptNo, 0, 4);
-                                        $departmentModule = DepartmentModule::where('cms_department_name', 'like', $deptGroup.'%')->first();
+                                        $dept = Department::where('DeptNo', $employee->DeptNo)
+                                            ->orWhere('CostCntrNo', $employee->DeptNo)
+                                            ->first();
+                                        $costCenter = $dept?->CostCntrNo ?? $employee->DeptNo;
 
-                                        return $departmentModule ? $departmentModule->id : null;
+                                        if ($costCenter) {
+                                            $deptGroup = substr($costCenter, 0, 4);
+                                            $departmentModule = DepartmentModule::where(function ($q) use ($deptGroup) {
+                                                $q->where('cms_department_cost_center', 'like', $deptGroup.'%')
+                                                    ->orWhere('cms_department_name', 'like', $deptGroup.'%');
+                                            })->first();
+
+                                            return $departmentModule ? $departmentModule->id : null;
+                                        }
                                     }
                                 }
 

@@ -34,7 +34,7 @@ class DepartmentModule extends Model
     use LogsActivity;
 
     protected $fillable = [
-        'cms_department',
+        'cms_department_cost_center',
         'cms_department_name',
         'cms_department_slug',
         'cms_department_description',
@@ -110,15 +110,15 @@ class DepartmentModule extends Model
      */
     public function department(): BelongsTo
     {
-        return $this->belongsTo(Department::class, 'cms_department_name', 'DeptNo');
+        return $this->belongsTo(Department::class, 'cms_department_name', 'CostCntrNo');
     }
 
-    public static function formatDepartmentName(string $deptNo): string
+    public static function formatDepartmentName(string $costCntrNo): string
     {
-        $dept = Department::where('DeptNo', $deptNo)->first();
+        $dept = Department::where('CostCntrNo', $costCntrNo)->first();
 
         if (! $dept) {
-            return $deptNo;
+            return $costCntrNo;
         }
 
         $words = explode(' ', $dept->DeptDesc ?? '');

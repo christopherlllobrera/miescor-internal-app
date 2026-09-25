@@ -23,6 +23,16 @@ class DepartmentsTable
                     ->label('Department Name')
                     ->sortable()
                     ->searchable(),
+                TextColumn::make('businessUnit.BusinessUnitDesc')
+                    ->label('Business Unit')
+                    ->sortable()
+                    ->searchable(),
+                TextColumn::make('CostCntrNo')
+                    ->label('Cost Center No.')
+                    ->sortable()
+                    ->searchable(),
+                TextColumn::make('location.LocDesc')
+                    ->label('Location'),
             ])
             ->emptyStateIcon('heroicon-o-document-plus')
             ->emptyStateHeading('No Department yet')

@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\PayrollSelfService\AttendanceAuthorizationForms\Pages;
 
 use App\Filament\Resources\PayrollSelfService\AttendanceAuthorizationForms\AttendanceAuthorizationFormResource;
+use Filament\Actions\Action;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\CreateRecord;
 
@@ -11,6 +12,15 @@ class CreateAttendanceAuthorizationForm extends CreateRecord
     protected static string $resource = AttendanceAuthorizationFormResource::class;
 
     protected static bool $canCreateAnother = false;
+
+    protected function getCreateFormAction(): Action
+    {
+        return parent::getCreateFormAction()
+            ->requiresConfirmation()
+            ->modalHeading('Submit Attendance Authorization Form')
+            ->modalDescription('Please confirm that all the information provided is correct before submitting.')
+            ->modalSubmitActionLabel('Yes, submit');
+    }
 
     protected function getRedirectUrl(): string
     {
@@ -26,7 +36,7 @@ class CreateAttendanceAuthorizationForm extends CreateRecord
             ->send();
     }
 
-    protected static ?string $title = 'Create AAF';
+    protected static ?string $title = 'Create Attendance Authorization Correction';
 
     protected function mutateFormDataBeforeCreate(array $data): array
     {

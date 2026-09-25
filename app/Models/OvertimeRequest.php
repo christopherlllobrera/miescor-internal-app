@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\HasSelfServiceRequestorFields;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -24,18 +25,25 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property-read Employee|null $employee
+ * @property-read BusinessUnits|null $businessUnit
+ * @property-read Location|null $location
+ * @property-read EmployeeStatus|null $employeeStatus
  * @property-read Collection<int, OvertimeRequestItem> $items
  * @property-read Employee|null $immediate_supervisor
  * @property-read Employee|null $next_level_supervisor
  */
 class OvertimeRequest extends Model
 {
+    use HasSelfServiceRequestorFields;
+
     protected $fillable = [
         'empNo',
         'employee_group',
         'location_id',
         'schedule',
         'status',
+        'business_unit',
+
         'immediate_supervisor_id',
         'next_level_supervisor_id',
         'remarks',
@@ -72,5 +80,20 @@ class OvertimeRequest extends Model
     public function next_level_supervisor(): BelongsTo
     {
         return $this->belongsTo(Employee::class, 'next_level_supervisor_id', 'EmpNo');
+    }
+
+    public function businessUnit(): BelongsTo
+    {
+        return $this->belongsTo(BusinessUnits::class, 'business_unit', 'BusinessUnitDesc');
+    }
+
+    public function location(): BelongsTo
+    {
+        return $this->belongsTo(Location::class, 'location_id', 'LocDesc');
+    }
+
+    public function employeeStatus(): BelongsTo
+    {
+        return $this->belongsTo(EmployeeStatus::class, 'employee_group', 'EmpStatusDesc');
     }
 }

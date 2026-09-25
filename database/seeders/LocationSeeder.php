@@ -13,7 +13,11 @@ class LocationSeeder extends Seeder
      */
     public function run(): void
     {
-        $sqlPath = database_path('seeders/sql/tblLocationA.sql');
+        $sqlPath = database_path('seeders/sql/tblLocation 2026.sql');
+        if (! File::exists($sqlPath)) {
+            $sqlPath = database_path('seeders/sql/tblLocationA.sql');
+        }
+
         if (File::exists($sqlPath)) {
             $sql = File::get($sqlPath);
             $sql = str_replace("\xEF\xBB\xBF", '', $sql);

@@ -20,6 +20,7 @@ class AlterBinaryColumnsToLongBlobSeeder extends Seeder
             'ALTER TABLE directory_modules MODIFY poc_image LONGBLOB NULL',
             'ALTER TABLE leave_requests MODIFY attachment LONGBLOB NULL',
             'ALTER TABLE carousels MODIFY image LONGBLOB NULL',
+            'ALTER TABLE tblEmployee MODIFY ItemPict LONGBLOB NULL',
         ];
 
         foreach ($alterations as $sql) {

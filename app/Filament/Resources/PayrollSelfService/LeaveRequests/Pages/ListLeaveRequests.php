@@ -8,7 +8,6 @@ use App\Models\LeaveRequest;
 use App\Services\TextExportService;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
-use Filament\Actions\CreateAction;
 use Filament\Actions\ExportAction;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
@@ -25,7 +24,16 @@ class ListLeaveRequests extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            CreateAction::make()->label('Create'),
+            Action::make('create_sick_leave')
+                ->label('Sick Leave')
+                ->icon('heroicon-o-plus')
+                ->color('info')
+                ->url(fn (): string => LeaveRequestResource::getUrl('create', ['type' => 'Sick Leave'])),
+            Action::make('create_vacation_leave')
+                ->label('Vacation Leave')
+                ->icon('heroicon-o-plus')
+                ->color('primary')
+                ->url(fn (): string => LeaveRequestResource::getUrl('create', ['type' => 'Vacation Leave'])),
             Action::make('switch_detailed_view')
                 ->label('Review')
                 ->icon('heroicon-o-view-columns')

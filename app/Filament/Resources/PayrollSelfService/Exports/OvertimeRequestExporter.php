@@ -50,10 +50,23 @@ class OvertimeRequestExporter extends Exporter
     public static function getOptionsFormComponents(): array
     {
         return [
-            DatePicker::make('start_date')
-                ->label('From Date'),
-            DatePicker::make('end_date')
-                ->label('Until Date'),
+            Grid::make(2)
+                ->schema([
+                    DatePicker::make('start_date')
+                        ->label('From Date'),
+                    DatePicker::make('end_date')
+                        ->label('Until Date'),
+                    Select::make('business_unit')
+                        ->label('Business Unit')
+                        ->options(BusinessUnits::pluck('BusinessUnitDesc', 'BusinessUnitNo'))
+                        ->searchable()
+                        ->preload(),
+                    Select::make('payroll_area')
+                        ->label('Payroll Area')
+                        // ->options(PayrollArea::pluck('PayrollAreaDesc', 'PayrollAreaNo'))
+                        ->searchable()
+                        ->preload(),
+                ]),
         ];
     }
 

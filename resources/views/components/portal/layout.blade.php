@@ -17,7 +17,7 @@
 
     {{ $head ?? '' }}
 </head>
-<body class="bg-gray-50 text-gray-950 antialiased">
+<body class="bg-gray-50 text-gray-950 antialiased min-h-screen flex flex-col">
     {{ $slot }}
 </body>
 </html>

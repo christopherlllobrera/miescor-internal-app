@@ -10,6 +10,7 @@ return new class extends Migration
     {
         Schema::create('department_modules', function (Blueprint $table) {
             $table->id();
+            $table->string('cms_department_cost_center')->nullable();
             $table->string('cms_department_name')->nullable();
             $table->longText('cms_department_description')->nullable();
             $table->string('cms_department_slug')->nullable();

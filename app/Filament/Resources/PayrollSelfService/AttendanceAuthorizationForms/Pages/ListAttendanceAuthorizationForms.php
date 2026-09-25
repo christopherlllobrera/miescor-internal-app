@@ -113,7 +113,7 @@ class ListAttendanceAuthorizationForms extends ListRecords
                                 $record->employee_group ?? '',
                                 $record->employee?->location?->LocDesc ?? '',
                                 $record->schedule ?? '',
-                                $record->reason ?? '',
+                                $record->items->pluck('reason')->filter()->unique()->implode(', '),
                                 $record->status ?? '',
                                 $aafDates,
                                 $record->remarks ?? '',

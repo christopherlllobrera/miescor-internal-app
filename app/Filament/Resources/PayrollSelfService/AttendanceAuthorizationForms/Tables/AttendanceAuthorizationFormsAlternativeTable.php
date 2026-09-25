@@ -14,6 +14,7 @@ use Filament\Forms\Components\TimePicker;
 use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Grid;
 use Filament\Support\Enums\FontWeight;
+use Filament\Support\Enums\Width;
 use Filament\Tables\Columns\Layout\Stack;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
@@ -105,7 +106,8 @@ class AttendanceAuthorizationFormsAlternativeTable
                         'Pending' => 'Pending',
                         'Approved' => 'Approved',
                         'Rejected' => 'Rejected',
-                    ]),
+                    ])
+                    ->preload()->searchable(),
                 SelectFilter::make('employee_group')
                     ->label('Employee Group')
                     ->options([
@@ -116,7 +118,8 @@ class AttendanceAuthorizationFormsAlternativeTable
                         'Regular Work Pool' => 'Regular Work Pool',
                         'Service Agreement' => 'Service Agreement',
                         'Meralco Seconded' => 'Meralco Seconded',
-                    ]),
+                    ])
+                    ->preload()->searchable(),
                 SelectFilter::make('reason')
                     ->label('Reason')
                     ->options([
@@ -124,7 +127,14 @@ class AttendanceAuthorizationFormsAlternativeTable
                         'Forgot to Log in or Log out' => 'Forgot to Log in or Log out',
                         'Out of Base for Official Business' => 'Out of Base for Official Business',
                         'No Company ID' => 'No Company ID',
-                    ]),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query->when(
+                            $data['value'] ?? null,
+                            fn (Builder $q, $reason) => $q->whereHas('items', fn (Builder $itemQuery) => $itemQuery->where('reason', $reason))
+                        );
+                    })
+                    ->preload()->searchable(),
                 Filter::make('date_range')
                     ->schema([
                         DatePicker::make('from')
@@ -140,10 +150,10 @@ class AttendanceAuthorizationFormsAlternativeTable
                     ->indicateUsing(function (array $data): array {
                         $indicators = [];
                         if ($data['from'] ?? null) {
-                            $indicators['from'] = 'Filed from: '.Carbon::parse($data['from'])->toFormattedDateString();
+                            $indicators['from'] = 'Filed from '.Carbon::parse($data['from'])->toFormattedDateString();
                         }
                         if ($data['until'] ?? null) {
-                            $indicators['until'] = 'Filed until: '.Carbon::parse($data['until'])->toFormattedDateString();
+                            $indicators['until'] = 'Filed until '.Carbon::parse($data['until'])->toFormattedDateString();
                         }
 
                         return $indicators;
@@ -156,13 +166,14 @@ class AttendanceAuthorizationFormsAlternativeTable
                     ->color('info')
                     // ->button()
                     ->modalHeading(fn (AttendanceAuth $record): string => "AAF #{$record->id} — Items Details (".($record->employee->full_name ?? 'Record').')')
-                    ->modalWidth('4xl')
+                    ->modalWidth(Width::FiveExtraLarge)
                     ->fillForm(fn (AttendanceAuth $record): array => [
                         'employee_name' => $record->employee?->full_name,
-                        'reason' => $record->reason,
+                        'reason' => $record->items->pluck('reason')->filter()->unique()->implode(', ') ?: '—',
                         'status' => $record->status,
                         'items' => $record->items->map(fn ($item): array => [
                             'date' => $item->date?->format('Y-m-d'),
+                            'reason' => $item->reason,
                             'time_in' => $item->time_in,
                             'request_time_in' => $item->request_time_in,
                             'time_out' => $item->time_out,
@@ -175,7 +186,7 @@ class AttendanceAuthorizationFormsAlternativeTable
                                 ->label('Employee')
                                 ->disabled(),
                             TextInput::make('reason')
-                                ->label('Reason')
+                                ->label('Reason(s)')
                                 ->disabled(),
                             TextInput::make('status')
                                 ->label('Status')
@@ -183,9 +194,10 @@ class AttendanceAuthorizationFormsAlternativeTable
                         ]),
                         Repeater::make('items')
                             ->label('Attendance Authorization Dates & Times')
-                            ->columns(5)
+                            ->columns(6)
                             ->schema([
                                 DatePicker::make('date')->label('Date')->disabled(),
+                                TextInput::make('reason')->label('Reason')->disabled(),
                                 TimePicker::make('time_in')->label('Time In')->disabled(),
                                 TimePicker::make('request_time_in')->label('Request Time In')->disabled(),
                                 TimePicker::make('time_out')->label('Time Out')->disabled(),

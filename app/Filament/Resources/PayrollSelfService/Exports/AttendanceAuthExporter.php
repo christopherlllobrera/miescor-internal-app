@@ -3,10 +3,13 @@
 namespace App\Filament\Resources\PayrollSelfService\Exports;
 
 use App\Models\AttendanceAuth;
+use App\Models\BusinessUnits;
 use Filament\Actions\Exports\ExportColumn;
 use Filament\Actions\Exports\Exporter;
 use Filament\Actions\Exports\Models\Export;
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Select;
+use Filament\Schemas\Components\Grid;
 use Illuminate\Support\Str;
 
 class AttendanceAuthExporter extends Exporter
@@ -29,7 +32,8 @@ class AttendanceAuthExporter extends Exporter
             ExportColumn::make('schedule')
                 ->label('Schedule'),
             ExportColumn::make('reason')
-                ->label('Reason'),
+                ->label('Reason')
+                ->state(fn (AttendanceAuth $record): string => $record->items->pluck('reason')->filter()->unique()->implode(', ')),
             ExportColumn::make('status')
                 ->label('Status'),
             ExportColumn::make('aaf_dates')
@@ -49,10 +53,23 @@ class AttendanceAuthExporter extends Exporter
     public static function getOptionsFormComponents(): array
     {
         return [
-            DatePicker::make('start_date')
-                ->label('From Date'),
-            DatePicker::make('end_date')
-                ->label('Until Date'),
+            Grid::make(2)
+                ->schema([
+                    DatePicker::make('start_date')
+                        ->label('From Date'),
+                    DatePicker::make('end_date')
+                        ->label('Until Date'),
+                    Select::make('business_unit')
+                        ->label('Business Unit')
+                        ->options(BusinessUnits::pluck('BusinessUnitDesc', 'BusinessUnitNo'))
+                        ->searchable()
+                        ->preload(),
+                    Select::make('payroll_area')
+                        ->label('Payroll Area')
+                        // ->options(PayrollArea::pluck('PayrollAreaDesc', 'PayrollAreaNo'))
+                        ->searchable()
+                        ->preload(),
+                ]),
         ];
     }
 

@@ -10,6 +10,7 @@ use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
@@ -118,9 +119,10 @@ class HrBulkLeaveRequest extends Page
                                     ->searchable()
                                     ->preload()
                                     ->required(),
-                                TextInput::make('reason')
+                                Textarea::make('reason')
                                     ->label('Reason')
                                     ->required()
+                                    ->rows(3)
                                     ->columnSpanFull(),
                                 FileUpload::make('attachment')
                                     ->label('Attachment')

@@ -5,6 +5,7 @@ use App\Http\Controllers\DownloadableActivityController;
 use App\Http\Controllers\FAQController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\UserAvatarController;
 use App\Http\Controllers\WorkflowController;
 use Illuminate\Support\Facades\Route;
 
@@ -19,6 +20,8 @@ Route::get('/under-development', function () {
 });
 
 Route::middleware('auth')->group(function () {
+    Route::get('/users/{user}/avatar', UserAvatarController::class)->name('users.avatar');
+
     Route::get('/blog', [PostController::class, 'index'])->name('posts.index');
     Route::get('/blog/{post:slug}', [PostController::class, 'show'])->name('posts.show');
 

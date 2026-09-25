@@ -21,11 +21,11 @@ return new class extends Migration
             $table->string('EmpContact1', 25)->nullable();
             $table->string('EmpContact2', 25)->nullable();
             $table->string('EmpContact3', 25)->nullable();
-            $table->string('EmpEmergency', 50)->nullable();
+            $table->string('EmpEmergency', 500)->nullable();
             $table->string('EmpEmerContact', 50)->nullable();
             $table->string('EmpEmailAd', 50)->nullable();
             $table->string('PictName', 50)->nullable();
-            $table->binary('ItemPict')->nullable();
+            $table->longText('ItemPict')->charset('binary')->nullable();
             $table->string('Gender', 50)->nullable();
             $table->string('TINNo', 50)->nullable();
             $table->string('SSSNo', 50)->nullable();

@@ -13,8 +13,8 @@ return new class extends Migration
             $table->string('PostDesc', 500)->nullable();
             $table->string('DeptNo', 150)->nullable();
             $table->integer('CreatedBy')->nullable();
-            $table->integer('UpdatedBy')->nullable();
             $table->dateTime('DateCreated')->nullable();
+            $table->integer('UpdatedBy')->nullable();
             $table->dateTime('DateUpdated')->nullable();
         });
     }
