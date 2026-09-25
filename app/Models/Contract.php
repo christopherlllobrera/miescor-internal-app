@@ -28,6 +28,8 @@ class Contract extends Model
         'deadline',
         'remarks',
         'proponent',
+        'proponent_business_unit',
+        'proponent_department',
         'position',
         'created_by',
         'updated_by',

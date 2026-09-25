@@ -3,11 +3,14 @@
 namespace App\Notifications;
 
 use App\Models\Contract;
+use Filament\Notifications\Notification as FilamentNotification;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Notifications\AnonymousNotifiable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class ContractAssignedForReview extends Notification
+class ContractDueTomorrowNotification extends Notification
 {
     use Queueable;
 
@@ -26,7 +29,9 @@ class ContractAssignedForReview extends Notification
      */
     public function via(object $notifiable): array
     {
-        return ['mail'];
+        return $notifiable instanceof AnonymousNotifiable
+            ? ['mail']
+            : ['mail', 'database'];
     }
 
     /**
@@ -34,15 +39,21 @@ class ContractAssignedForReview extends Notification
      */
     public function toMail(object $notifiable): MailMessage
     {
-        $sharepointLink = $this->contract->attachment ?: url('/'); // Fallback if no link
-
         return (new MailMessage)
-            ->subject('Action Required: Contract '.$this->contract->contract_title.' is ready for your review.')
-            ->view('emails.contract-assigned-for-review', [
+            ->subject('Reminder: Contract Due Tomorrow - '.$this->contract->reference_no)
+            ->view('emails.contract-due-tomorrow', [
                 'contract' => $this->contract,
                 'notifiable' => $notifiable,
-                'sharepointLink' => $sharepointLink,
             ]);
+    }
+
+    public function toDatabase(object $notifiable): array
+    {
+        return FilamentNotification::make()
+            ->title('Contract Due Tomorrow')
+            ->body('The deadline or turnaround time for the contract "'.$this->contract->contract_title.'" is due tomorrow.')
+            ->warning()
+            ->getDatabaseMessage();
     }
 
     /**

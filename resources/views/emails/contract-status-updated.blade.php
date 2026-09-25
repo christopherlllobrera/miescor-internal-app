@@ -88,7 +88,7 @@
                                         </p>
 
                                         <p style="font-size: 16px; color: #333333; margin: 0 0 15px 0; padding: 0; line-height: 1.5;">
-                                            New Status: <strong>{{ $contract->status }}</strong>
+                                            Its status has recently been updated to: <strong>{{ $contract->status }}</strong>. The assigned reviewers have been notified.
                                         </p>
                                         <table role="presentation" border="0" cellpadding="0" cellspacing="0"
                                             style="border-collapse: collapse; mso-table-lspace: 0pt; mso-table-rspace: 0pt; margin: 10px 0 0 0;">

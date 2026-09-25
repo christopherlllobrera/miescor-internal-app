@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contract Assigned for Review</title>
+    <title>Contract Due Notification</title>
     <style type="text/css">
         body {
             margin: 0;
@@ -80,32 +80,32 @@
                                 <tr>
                                     <td style="text-align: left;">
                                         <p style="font-size: 16px; color: #333333; margin: 0 0 15px 0; padding: 0; line-height: 1.5;">
-                                            Dear <span class="employee-name">{{ $notifiable->name ?? $notifiable->username ?? 'User' }}</span>,
+                                            Dear <span class="employee-name">{{ $notifiable->name ?? $contract->assignee?->EmpFName ?? 'User' }}</span>,
                                         </p>
 
                                         <p style="font-size: 16px; color: #333333; margin: 0 0 15px 0; padding: 0; line-height: 1.5;">
-                                            You have been assigned to review the contract "<strong>{{ $contract->contract_title }}</strong>" (Ref: {{ $contract->reference_no }}).
+                                            This is a reminder that the deadline or turnaround time for the contract "<strong>{{ $contract->contract_title }}</strong>" (Ref: {{ $contract->reference_no }}) assigned to you is due <strong>tomorrow</strong>.
                                         </p>
 
                                         <p style="font-size: 16px; color: #333333; margin: 0 0 15px 0; padding: 0; line-height: 1.5;">
-                                            Please review the document and provide your decision at your earliest convenience to keep the workflow on schedule.
+                                            Please take the necessary actions.
                                         </p>
                                         <table role="presentation" border="0" cellpadding="0" cellspacing="0"
                                             style="border-collapse: collapse; mso-table-lspace: 0pt; mso-table-rspace: 0pt; margin: 10px 0 0 0;">
                                             <tr>
                                                 <td align="left"
                                                     style="border-radius: 4px; background-color: #f97316;">
-                                                    <a href="{{ $sharepointLink }}"
+                                                    <a href="{{ url('/services/login' ) }}"
                                                         class="button"
                                                         style="display: inline-block; background-color: #f97316; color: #ffffff; padding: 12px 24px; border-radius: 4px; font-size: 16px; font-weight: bold; text-decoration: none;">
-                                                        View Document
+                                                        View Contract
                                                     </a>
                                                 </td>
                                             </tr>
                                         </table>
 
-                                        <p style="font-size: 16px; color: #333333; margin-top: 10px; padding: 0; line-height: 1.5;">
-                                            Thank you for using our application!
+                                        <p style="font-size: 16px; color: #333333; margin-top: 15px; padding: 0; line-height: 1.5;">
+                                            If you have already addressed this, please disregard this email.
                                         </p>
 
                                         <p class="body-text" style="font-size: 14px; color: #666666; margin: 25px 0 0 0; padding: 0; font-family: Arial, sans-serif; line-height: 1.5;">

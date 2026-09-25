@@ -226,6 +226,13 @@ class ContractBoard extends BoardResourcePage
                             ->icon('heroicon-o-chat-bubble-bottom-center-text')
                             ->color('gray')
                             ->size('xs'),
+                        TextEntry::make('reviewers_count')
+                            ->hiddenLabel()
+                            ->state(fn (Contract $record): string => $record->review_progress)
+                            ->icon('heroicon-o-users')
+                            ->color('gray')
+                            ->size('xs')
+                            ->visible(fn (Contract $record): bool => $record->reviewers()->count() > 0),
                     ])
                         ->wrap(false),
                 ]));
