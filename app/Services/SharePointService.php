@@ -7,9 +7,9 @@ use Illuminate\Support\Facades\Log;
 
 class SharePointService
 {
-    protected string $tenantId;
-    protected string $clientId;
-    protected string $clientSecret;
+    protected ?string $tenantId;
+    protected ?string $clientId;
+    protected ?string $clientSecret;
     protected string $graphUrl = 'https://graph.microsoft.com/v1.0';
 
     public function __construct()
@@ -80,5 +80,59 @@ class SharePointService
         }
 
         return true;
+    }
+
+    /**
+     * Encode a sharing URL for Graph API.
+     */
+    protected function encodeSharingUrl(string $url): string
+    {
+        $base64Value = base64_encode($url);
+        return 'u!' . str_replace(['+', '/', '='], ['-', '_', ''], $base64Value);
+    }
+
+    /**
+     * Lock the file using its SharePoint Sharing Link.
+     */
+    public function lockDocumentByUrl(string $shareUrl): bool
+    {
+        $token = $this->getAccessToken();
+        if (!$token) return false;
+
+        $encodedUrl = $this->encodeSharingUrl($shareUrl);
+
+        // Fetch the permissions for this shared item
+        $response = Http::withToken($token)
+            ->get("{$this->graphUrl}/shares/{$encodedUrl}/permission");
+
+        if ($response->failed()) {
+            Log::error('SharePoint get permissions Error: ' . $response->body());
+            return false;
+        }
+
+        $permissions = $response->json('value');
+        
+        if (empty($permissions)) {
+            // No permissions found, already locked/revoked
+            return true;
+        }
+
+        $allRevoked = true;
+
+        foreach ($permissions as $permission) {
+            $permId = $permission['id'] ?? null;
+            if ($permId) {
+                // Delete the permission (this breaks the sharing link)
+                $deleteResponse = Http::withToken($token)
+                    ->delete("{$this->graphUrl}/shares/{$encodedUrl}/permissions/{$permId}");
+
+                if ($deleteResponse->failed()) {
+                    Log::error("SharePoint revoke permission {$permId} Error: " . $deleteResponse->body());
+                    $allRevoked = false;
+                }
+            }
+        }
+
+        return $allRevoked;
     }
 }

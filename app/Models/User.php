@@ -16,6 +16,7 @@ use Illuminate\Auth\Passwords\CanResetPassword as CanResetPasswordTrait;
 use Illuminate\Contracts\Auth\CanResetPassword;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Storage;
@@ -171,5 +172,12 @@ class User extends Authenticatable implements CanResetPassword, FilamentUser, Ha
             get: fn () => $this->comp_email,
             set: fn ($value) => ['comp_email' => $value],
         );
+    }
+
+    public function contractReviews(): BelongsToMany
+    {
+        return $this->belongsToMany(Contract::class, 'contract_reviews')
+            ->withPivot('status', 'reviewed_at')
+            ->withTimestamps();
     }
 }

@@ -5,11 +5,12 @@ namespace App\Notifications;
 use App\Models\Contract;
 use Filament\Notifications\Notification as FilamentNotification;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\AnonymousNotifiable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class ContractStatusUpdated extends Notification
+class ContractDueTomorrowNotification extends Notification
 {
     use Queueable;
 
@@ -33,12 +34,14 @@ class ContractStatusUpdated extends Notification
             : ['mail', 'database'];
     }
 
-    // Contents of the Mail and Email sending
+    /**
+     * Get the mail representation of the notification.
+     */
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject('Status Update: Contract '.$this->contract->contract_title)
-            ->view('emails.contract-status-updated', [
+            ->subject('Reminder: Contract Due Tomorrow - '.$this->contract->reference_no)
+            ->view('emails.contract-due-tomorrow', [
                 'contract' => $this->contract,
                 'notifiable' => $notifiable,
             ]);
@@ -47,9 +50,9 @@ class ContractStatusUpdated extends Notification
     public function toDatabase(object $notifiable): array
     {
         return FilamentNotification::make()
-            ->title('Statud Updated: Contract')
-            ->body('The status for the contract "'.$this->contract->contract_title.' is now '.$this->contract->status)
-            ->success()
+            ->title('Contract Due Tomorrow')
+            ->body('The deadline or turnaround time for the contract "'.$this->contract->contract_title.'" is due tomorrow.')
+            ->warning()
             ->getDatabaseMessage();
     }
 

@@ -3,13 +3,11 @@
 namespace App\Notifications;
 
 use App\Models\Contract;
-use Filament\Notifications\Notification as FilamentNotification;
 use Illuminate\Bus\Queueable;
-use Illuminate\Notifications\AnonymousNotifiable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class ContractStatusUpdated extends Notification
+class ContractAssignedForReview extends Notification
 {
     use Queueable;
 
@@ -28,29 +26,23 @@ class ContractStatusUpdated extends Notification
      */
     public function via(object $notifiable): array
     {
-        return $notifiable instanceof AnonymousNotifiable
-            ? ['mail']
-            : ['mail', 'database'];
+        return ['mail'];
     }
 
-    // Contents of the Mail and Email sending
+    /**
+     * Get the mail representation of the notification.
+     */
     public function toMail(object $notifiable): MailMessage
     {
+        $sharepointLink = $this->contract->attachment ?: url('/'); // Fallback if no link
+
         return (new MailMessage)
-            ->subject('Status Update: Contract '.$this->contract->contract_title)
-            ->view('emails.contract-status-updated', [
+            ->subject('Action Required: Contract '.$this->contract->contract_title.' is ready for your review.')
+            ->view('emails.contract-assigned-for-review', [
                 'contract' => $this->contract,
                 'notifiable' => $notifiable,
+                'sharepointLink' => $sharepointLink,
             ]);
-    }
-
-    public function toDatabase(object $notifiable): array
-    {
-        return FilamentNotification::make()
-            ->title('Statud Updated: Contract')
-            ->body('The status for the contract "'.$this->contract->contract_title.' is now '.$this->contract->status)
-            ->success()
-            ->getDatabaseMessage();
     }
 
     /**

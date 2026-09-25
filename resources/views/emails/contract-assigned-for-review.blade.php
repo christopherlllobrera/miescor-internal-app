@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contract Status Updated</title>
+    <title>Contract Assigned for Review</title>
     <style type="text/css">
         body {
             margin: 0;
@@ -80,25 +80,25 @@
                                 <tr>
                                     <td style="text-align: left;">
                                         <p style="font-size: 16px; color: #333333; margin: 0 0 15px 0; padding: 0; line-height: 1.5;">
-                                            Dear <span class="employee-name">{{ $notifiable->name ?? $contract->assignee?->EmpFName ?? 'User' }}</span>,
+                                            Dear <span class="employee-name">{{ $notifiable->name ?? $notifiable->username ?? 'User' }}</span>,
                                         </p>
 
                                         <p style="font-size: 16px; color: #333333; margin: 0 0 15px 0; padding: 0; line-height: 1.5;">
-                                            The status for the contract "<strong>{{ $contract->contract_title }}</strong>" (Ref: {{ $contract->reference_no }}) has been changed.
+                                            You have been assigned to review the contract "<strong>{{ $contract->contract_title }}</strong>" (Ref: {{ $contract->reference_no }}).
                                         </p>
 
                                         <p style="font-size: 16px; color: #333333; margin: 0 0 15px 0; padding: 0; line-height: 1.5;">
-                                            Its status has recently been updated to: <strong>{{ $contract->status }}</strong>. The assigned reviewers have been notified.
+                                            Please review the document and provide your decision at your earliest convenience to keep the workflow on schedule.
                                         </p>
                                         <table role="presentation" border="0" cellpadding="0" cellspacing="0"
                                             style="border-collapse: collapse; mso-table-lspace: 0pt; mso-table-rspace: 0pt; margin: 10px 0 0 0;">
                                             <tr>
                                                 <td align="left"
                                                     style="border-radius: 4px; background-color: #f97316;">
-                                                    <a href="{{ url('/services/login') }}"
+                                                    <a href="{{ $sharepointLink }}"
                                                         class="button"
                                                         style="display: inline-block; background-color: #f97316; color: #ffffff; padding: 12px 24px; border-radius: 4px; font-size: 16px; font-weight: bold; text-decoration: none;">
-                                                        View Contract
+                                                        View Document
                                                     </a>
                                                 </td>
                                             </tr>
